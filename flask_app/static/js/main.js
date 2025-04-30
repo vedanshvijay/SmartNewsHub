@@ -80,4 +80,83 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = 'translateY(0)';
         });
     }
+
+    // Handle Load More for Global News
+    const loadMoreGlobalBtn = document.getElementById('load-more-global');
+    if (loadMoreGlobalBtn) {
+        loadMoreGlobalBtn.addEventListener('click', function() {
+            const page = parseInt(this.getAttribute('data-page'));
+            loadMoreNews('global', page);
+            this.setAttribute('data-page', page + 1);
+        });
+    }
+
+    // Handle Load More for Indian News
+    const loadMoreIndianBtn = document.getElementById('load-more-indian');
+    if (loadMoreIndianBtn) {
+        loadMoreIndianBtn.addEventListener('click', function() {
+            const page = parseInt(this.getAttribute('data-page'));
+            loadMoreNews('indian', page);
+            this.setAttribute('data-page', page + 1);
+        });
+    }
+
+    // Function to load more news
+    function loadMoreNews(type, page) {
+        const url = `/api/news/${type}?page=${page}&page_size=10`;
+        const loadBtn = document.getElementById(`load-more-${type}`);
+        loadBtn.textContent = 'Loading...';
+        loadBtn.disabled = true;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById(`${type}-news-container`);
+                
+                if (data.articles && data.articles.length > 0) {
+                    data.articles.forEach(article => {
+                        const articleDiv = document.createElement('div');
+                        articleDiv.className = 'news-article mb-4';
+                        
+                        let html = '';
+                        
+                        if (article.image_url) {
+                            html += `<img src="${article.image_url}" alt="${article.title}" class="img-fluid mb-2 rounded">`;
+                        }
+                        
+                        html += `
+                            <h4><a href="${article.url}" target="_blank">${article.title}</a></h4>
+                            <p class="text-muted">
+                                <small>Source: ${article.source} | ${article.published_at || 'N/A'}</small>
+                            </p>
+                        `;
+                        
+                        if (article.description) {
+                            html += `<p>${article.description.length > 150 ? article.description.substring(0, 150) + '...' : article.description}</p>`;
+                        } else {
+                            html += `<p>No description available.</p>`;
+                        }
+                        
+                        articleDiv.innerHTML = html;
+                        container.appendChild(articleDiv);
+                    });
+                    
+                    loadBtn.textContent = 'Load More';
+                    loadBtn.disabled = false;
+                    
+                    if (!data.has_more) {
+                        loadBtn.textContent = 'No More Articles';
+                        loadBtn.disabled = true;
+                    }
+                } else {
+                    loadBtn.textContent = 'No More Articles';
+                    loadBtn.disabled = true;
+                }
+            })
+            .catch(error => {
+                console.error(`Error loading more ${type} news:`, error);
+                loadBtn.textContent = 'Try Again';
+                loadBtn.disabled = false;
+            });
+    }
 }); 

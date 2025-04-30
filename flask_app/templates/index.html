@@ -56,13 +56,13 @@
         </div>
     </section>
 
-    <!-- Global News Section -->
+    <!-- News Sections with Load More -->
     <section class="mb-5">
         <div class="section-header card border-0 shadow-sm mb-4">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <h2 class="section-title mb-0">
-                        <i class="fas fa-globe me-2"></i>Global Headlines
+                        <i class="fas fa-newspaper me-2"></i>Latest Headlines
                     </h2>
                     <div class="dropdown">
                         <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -81,93 +81,98 @@
                 </div>
             </div>
         </div>
-        <div class="row g-4">
-            {% for article in global_news %}
-            <article class="col-md-6 col-lg-4">
-                <div class="news-card card border-0 shadow-sm hover-card">
-                    {% if article.image_url %}
-                    <div class="card-img-wrapper">
-                        <img src="{{ article.image_url }}" class="card-img-top" alt="Image for '{{ article.title }}'">
-                    </div>
-                    {% endif %}
-                    <div class="card-body">
-                        <h3 class="card-title h5 text-truncate">{{ article.title }}</h3>
-                        <p class="card-text text-muted">{% if article.description %}{{ article.description|truncate(120) }}{% else %}No description available.{% endif %}</p>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">
-                                <i class="fas fa-newspaper me-1"></i>{{ article.source }}
-                            </small>
-                            <small class="text-muted">
-                                <i class="far fa-clock me-1"></i>{{ article.published_at }}
-                            </small>
-                        </div>
-                        <a href="{{ article.url }}" class="btn btn-primary mt-3 w-100" target="_blank" rel="noopener noreferrer">
-                            <i class="fas fa-book-reader me-1"></i>Read More
-                        </a>
-                    </div>
-                </div>
-            </article>
-            {% endfor %}
-        </div>
-    </section>
 
-    <!-- Indian News Section -->
-    <section>
-        <div class="section-header card border-0 shadow-sm mb-4">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h2 class="section-title mb-0">
-                        <i class="fas fa-map-marker-alt me-2"></i>Indian Headlines
-                    </h2>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-filter me-1"></i>Categories
-                        </button>
-                        <ul class="dropdown-menu">
-                            {% for category in categories %}
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('main.category', category_name=category) }}">
-                                    {{ category|title }}
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
+        <div class="row">
+            <!-- Global News Column -->
+            <div class="col-md-6">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="h4 mb-0">
+                            <i class="fas fa-globe me-2"></i>Global News
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="global-news-container">
+                            {% if global_news %}
+                                {% for article in global_news %}
+                                    <div class="news-article mb-4">
+                                        {% if article.image_url %}
+                                            <img src="{{ article.image_url }}" alt="{{ article.title }}" class="img-fluid mb-2 rounded">
+                                        {% endif %}
+                                        <h4 class="h5"><a href="{{ article.url }}" target="_blank" class="text-decoration-none">{{ article.title }}</a></h4>
+                                        <p class="text-muted small">
+                                            <i class="fas fa-newspaper me-1"></i>{{ article.source }} 
+                                            <i class="far fa-clock ms-2 me-1"></i>{{ article.published_at }}
+                                        </p>
+                                        {% if article.description %}
+                                            <p class="card-text">{{ article.description|truncate(150) }}</p>
+                                        {% else %}
+                                            <p class="card-text text-muted">No description available.</p>
+                                        {% endif %}
+                                        <a href="{{ article.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                            Read More <i class="fas fa-external-link-alt ms-1"></i>
+                                        </a>
+                                        <hr class="my-3">
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>No global news available at the moment.</p>
+                            {% endif %}
+                        </div>
+                        <div class="text-center mt-3">
+                            <button id="load-more-global" class="btn btn-outline-primary" data-page="1" data-type="global">
+                                <i class="fas fa-plus-circle me-1"></i>Load More
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row g-4">
-            {% for article in indian_news %}
-            <article class="col-md-6 col-lg-4">
-                <div class="news-card card border-0 shadow-sm hover-card">
-                    {% if article.image_url %}
-                    <div class="card-img-wrapper">
-                        <img src="{{ article.image_url }}" class="card-img-top" alt="Image for '{{ article.title }}'">
+
+            <!-- Indian News Column -->
+            <div class="col-md-6">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="h4 mb-0">
+                            <i class="fas fa-map-marker-alt me-2"></i>Indian News
+                        </h3>
                     </div>
-                    {% endif %}
                     <div class="card-body">
-                        <h3 class="card-title h5 text-truncate">{{ article.title }}</h3>
-                        <p class="card-text text-muted">{% if article.description %}{{ article.description|truncate(120) }}{% else %}No description available.{% endif %}</p>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">
-                                <i class="fas fa-newspaper me-1"></i>{{ article.source }}
-                            </small>
-                            <small class="text-muted">
-                                <i class="far fa-clock me-1"></i>{{ article.published_at }}
-                            </small>
+                        <div id="indian-news-container">
+                            {% if indian_news %}
+                                {% for article in indian_news %}
+                                    <div class="news-article mb-4">
+                                        {% if article.image_url %}
+                                            <img src="{{ article.image_url }}" alt="{{ article.title }}" class="img-fluid mb-2 rounded">
+                                        {% endif %}
+                                        <h4 class="h5"><a href="{{ article.url }}" target="_blank" class="text-decoration-none">{{ article.title }}</a></h4>
+                                        <p class="text-muted small">
+                                            <i class="fas fa-newspaper me-1"></i>{{ article.source }} 
+                                            <i class="far fa-clock ms-2 me-1"></i>{{ article.published_at }}
+                                        </p>
+                                        {% if article.description %}
+                                            <p class="card-text">{{ article.description|truncate(150) }}</p>
+                                        {% else %}
+                                            <p class="card-text text-muted">No description available.</p>
+                                        {% endif %}
+                                        <a href="{{ article.url }}" class="btn btn-sm btn-outline-success" target="_blank">
+                                            Read More <i class="fas fa-external-link-alt ms-1"></i>
+                                        </a>
+                                        <hr class="my-3">
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>No Indian news available at the moment.</p>
+                            {% endif %}
                         </div>
-                        <a href="{{ article.url }}" class="btn btn-primary mt-3 w-100" target="_blank" rel="noopener noreferrer">
-                            <i class="fas fa-book-reader me-1"></i>Read More
-                        </a>
+                        <div class="text-center mt-3">
+                            <button id="load-more-indian" class="btn btn-outline-success" data-page="1" data-type="indian">
+                                <i class="fas fa-plus-circle me-1"></i>Load More
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </article>
-            {% endfor %}
+            </div>
         </div>
     </section>
 </div>
-{% endblock %} 
+{% endblock %}

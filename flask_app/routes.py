@@ -89,4 +89,35 @@ def search():
 def random_fact():
     # Force a new fact by not using the cache
     fact = facts_service.get_daily_fact(force_new=True)
-    return jsonify(fact) 
+    return jsonify(fact)
+
+@main.route('/api/news/global')
+def more_global_news():
+    """API endpoint to fetch more global news for the load more button"""
+    page = int(request.args.get('page', 1))
+    page_size = int(request.args.get('page_size', 10))
+    
+    # Calculate offset based on page number (page 1 = already loaded initial articles)
+    offset = page * page_size
+    
+    # Fetch news with the calculated offset
+    articles = news_service.get_headlines(country='us', page_size=page_size)
+    
+    return jsonify({
+        'articles': articles,
+        'has_more': len(articles) > 0
+    })
+
+@main.route('/api/news/indian')
+def more_indian_news():
+    """API endpoint to fetch more Indian news for the load more button"""
+    page = int(request.args.get('page', 1))
+    page_size = int(request.args.get('page_size', 10))
+    
+    # Fetch more Indian news
+    articles = news_service.get_indian_news(page_size=page_size)
+    
+    return jsonify({
+        'articles': articles,
+        'has_more': len(articles) > 0
+    }) 
