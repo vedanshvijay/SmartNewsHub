@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, url_for, redirect, jsonify
-from . import cache, news_service, facts_service
+from flask_app import cache, news_service, facts_service
 from urllib.parse import quote_plus
 
 main = Blueprint('main', __name__)
