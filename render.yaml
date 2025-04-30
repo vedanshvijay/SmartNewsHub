@@ -1,12 +1,12 @@
 services:
   - type: web
     name: smartnewshub
-    env: python
+    runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: gunicorn wsgi:app
     envVars:
       - key: FLASK_APP
-        value: app
+        value: wsgi.py
       - key: FLASK_ENV
         value: production
       - key: NEWS_API_KEY
