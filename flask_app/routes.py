@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, request, url_for, redirect, jsonify, session, flash, current_app
 from flask_app import cache, news_service, facts_service
 from urllib.parse import quote_plus
-from newsapi import NewsApiClient
 import os
 
 main = Blueprint('main', __name__)
