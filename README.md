@@ -1,6 +1,28 @@
-# SmartNewsHub
+# PlanetPulse
 
-A Flask-based news aggregation platform that provides intelligent news recommendations.
+A modern news aggregation platform that brings you the latest news from around the world.
+
+## Features
+
+- Real-time news updates
+- Multiple news categories
+- Customizable news feed
+- Responsive design
+- User-friendly interface
+
+## Installation
+
+1. Clone the repository
+2. Install dependencies
+3. Run the application
+
+## License
+
+MIT License
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Setup
 

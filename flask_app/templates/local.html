@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">
+        {% if city and state and country %}
+            Local News for {{ city }}, {{ state }}, {{ country }}
+        {% elif state and country %}
+            News from {{ state }}, {{ country }}
+        {% elif country %}
+            News from {{ country }}
+        {% else %}
+            Local News
+        {% endif %}
+    </h1>
+
+    {% if not articles %}
+        <div class="alert alert-info">
+            {% if not country and not state and not city %}
+                Please set your location to see local news.
+            {% else %}
+                No local news found for your location.
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="row">
+            {% for article in articles %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        {% if article.image_url %}
+                            <img src="{{ article.image_url }}" class="card-img-top" alt="{{ article.title }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ article.title }}</h5>
+                            <p class="card-text">{{ article.description }}</p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Published: {{ article.published_at }}
+                                </small>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ article.url }}" target="_blank" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}SmartNewsHub{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}SmartNewsHub - Your intelligent news aggregation platform.{% endblock %}">
+    <title>{% block title %}PlanetPulse{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}PlanetPulse - Your intelligent news aggregation platform.{% endblock %}">
     
     <!-- Open Graph / Social Media Meta Tags -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.url }}">
-    <meta property="og:title" content="{% block og_title %}SmartNewsHub{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}PlanetPulse{% endblock %}">
     <meta property="og:description" content="{% block og_description %}Your intelligent news aggregation platform, bringing you the latest news from around the world.{% endblock %}">
     <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='img/logo.png', _external=True) }}{% endblock %}">
     
@@ -26,23 +26,80 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
             <div class="container">
                 <a class="navbar-brand fw-bold text-primary fs-3" href="/">
-                    <i class="fas fa-newspaper me-2"></i>SmartNewsHub
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="PlanetPulse Logo" class="d-inline-block align-text-top" style="height: 60px; width: auto;">
+                    <span class="d-none d-md-inline">PlanetPulse</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="/">Home</a>
+                            <a class="nav-link active" href="/" title="Home"><i class="fas fa-home"></i></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
+                            <a class="nav-link" href="{{ url_for('main.category', category_name='world') }}" title="Global News"><i class="fas fa-globe"></i></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Contact</a>
+                            <a class="nav-link" href="{{ url_for('main.category', category_name='india') }}" title="Indian News"><i class="fas fa-map-marker-alt"></i></a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Categories">
+                                <i class="fas fa-th-large"></i>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='business') }}"><i class="fas fa-briefcase me-2"></i>Business</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='technology') }}"><i class="fas fa-flask me-2"></i>Technology</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='sports') }}"><i class="fas fa-futbol me-2"></i>Sports</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='health') }}"><i class="fas fa-heartbeat me-2"></i>Health</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='education') }}"><i class="fas fa-graduation-cap me-2"></i>Education</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='entertainment') }}"><i class="fas fa-film me-2"></i>Entertainment</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='science') }}"><i class="fas fa-microscope me-2"></i>Science</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='politics') }}"><i class="fas fa-landmark me-2"></i>Politics</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="helpDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Help">
+                                <i class="fas fa-question-circle"></i>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="helpDropdown">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-info-circle me-2"></i>About News</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-book me-2"></i>News Guide</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-question me-2"></i>FAQ</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-envelope me-2"></i>Contact Support</a></li>
+                            </ul>
                         </li>
                     </ul>
+                    <div class="d-flex align-items-center">
+                        <form class="d-flex me-3 search-container" action="{{ url_for('main.search') }}" method="GET">
+                            <input class="form-control me-2" type="search" name="q" placeholder="Search news..." aria-label="Search" required>
+                            <button class="btn btn-outline-primary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main.settings') }}" title="Settings">
+                                <i class="fas fa-cog"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main.location') }}" title="Location">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </a>
+                        </li>
+                        <div class="dropdown account-dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -54,21 +111,154 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer mt-auto py-4 bg-dark text-light border-0 shadow-sm">
-        <div class="container text-center">
-            <div class="mb-2">
-                <a href="/" class="fw-bold text-primary text-decoration-none fs-5">
-                    <i class="fas fa-newspaper me-1"></i>SmartNewsHub
-                </a>
+    <footer class="footer mt-auto py-4">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="footer-section">
+                        <h5 class="footer-title">PlanetPulse</h5>
+                        <p class="footer-text">Your trusted source for intelligent news aggregation and updates from around the world.</p>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="footer-section">
+                        <h5 class="footer-title">Quick Links</h5>
+                        <ul class="footer-links">
+                            <li><a href="/" class="footer-link">Home</a></li>
+                            <li><a href="{{ url_for('main.category', category_name='world') }}" class="footer-link">Global News</a></li>
+                            <li><a href="{{ url_for('main.category', category_name='india') }}" class="footer-link">Indian News</a></li>
+                            <li><a href="#" class="footer-link" data-bs-toggle="modal" data-bs-target="#privacyPolicyModal">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="footer-section">
+                        <h5 class="footer-title">Contact Us</h5>
+                        <ul class="footer-contact">
+                            <li>
+                                <a href="mailto:ved02vijay@gmail.com" class="text-decoration-none">
+                                    <i class="fas fa-envelope"></i> ved02vijay@gmail.com
+                                </a>
+                            </li>
+                            <li>
+                                <a href="tel:+919413846397" class="text-decoration-none">
+                                    <i class="fas fa-phone"></i> +91 9413846397
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="mb-2">
-                <a href="mailto:ved02vijay@gmail.com" class="footer-link">Contact: ved02vijay@gmail.com</a>
-                <span class="mx-2">|</span>
-                <span class="footer-link">Developer: Vedansh Vijayvargia</span>
+            <div class="footer-bottom text-center mt-4 pt-3">
+                <p class="mb-0">&copy; 2024 PlanetPulse. All rights reserved.</p>
             </div>
-            <div class="text-muted small">&copy; {{ 2025 }} SmartNewsHub. All rights reserved.</div>
         </div>
     </footer>
+
+    <!-- Privacy Policy Modal -->
+    <div class="modal fade" id="privacyPolicyModal" tabindex="-1" aria-labelledby="privacyPolicyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="privacyPolicyModalLabel">
+                        <i class="fas fa-shield-alt me-2"></i>Privacy Policy
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="privacy-content">
+                        <section class="mb-4">
+                            <h6 class="text-primary mb-3">1. Information We Collect</h6>
+                            <p>We collect information that you provide directly to us, including:</p>
+                            <ul>
+                                <li>Email address for newsletter subscriptions</li>
+                                <li>News preferences and reading history</li>
+                                <li>Device and browser information</li>
+                                <li>IP address and location data</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-4">
+                            <h6 class="text-primary mb-3">2. How We Use Your Information</h6>
+                            <p>We use the collected information to:</p>
+                            <ul>
+                                <li>Provide and improve our news services</li>
+                                <li>Send you relevant news updates and newsletters</li>
+                                <li>Personalize your news feed</li>
+                                <li>Analyze and improve our website performance</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-4">
+                            <h6 class="text-primary mb-3">3. Data Protection</h6>
+                            <p>We implement appropriate security measures to protect your personal information:</p>
+                            <ul>
+                                <li>Encryption of data in transit</li>
+                                <li>Secure storage of user data</li>
+                                <li>Regular security audits</li>
+                                <li>Limited access to personal information</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-4">
+                            <h6 class="text-primary mb-3">4. Third-Party Services</h6>
+                            <p>We may use third-party services that collect, monitor, and analyze information, including:</p>
+                            <ul>
+                                <li>Analytics services (Google Analytics)</li>
+                                <li>News content providers</li>
+                                <li>Advertisement networks</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-4">
+                            <h6 class="text-primary mb-3">5. Your Rights</h6>
+                            <p>You have the right to:</p>
+                            <ul>
+                                <li>Access your personal information</li>
+                                <li>Correct inaccurate data</li>
+                                <li>Request deletion of your data</li>
+                                <li>Opt-out of marketing communications</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-4">
+                            <h6 class="text-primary mb-3">6. Cookies</h6>
+                            <p>We use cookies to:</p>
+                            <ul>
+                                <li>Remember your preferences</li>
+                                <li>Improve user experience</li>
+                                <li>Analyze website traffic</li>
+                                <li>Provide personalized content</li>
+                            </ul>
+                        </section>
+
+                        <section class="mb-4">
+                            <h6 class="text-primary mb-3">7. Changes to Privacy Policy</h6>
+                            <p>We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page.</p>
+                        </section>
+
+                        <section>
+                            <h6 class="text-primary mb-3">8. Contact Us</h6>
+                            <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+                            <p><i class="fas fa-envelope me-2"></i>ved02vijay@gmail.com</p>
+                        </section>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="acceptPrivacyPolicy">
+                        <i class="fas fa-check me-2"></i>I Accept
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

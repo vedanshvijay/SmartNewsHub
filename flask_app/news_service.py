@@ -22,12 +22,14 @@ class NewsService:
             logger.warning("NEWSDATA_API_KEY not found in environment variables")
 
     def get_headlines(self, page_size=10, page=0, category=None):
+        """Fetch headlines with equal limit for all news types"""
         params = {
             'apikey': self.api_key,
             'language': self.default_language,
+            'size': page_size  # Ensure equal limit
         }
         
-        # Only add page parameter if it's not the first page (NewsData.io uses nextPage token)
+        # Only add page parameter if it's not the first page
         if isinstance(page, str) and page:
             params['page'] = page
             
@@ -51,7 +53,10 @@ class NewsService:
             results = data.get('results', [])
             logger.info(f"Received {len(results)} articles from API")
             
+            # Track seen article IDs to prevent duplicates
+            seen_article_ids = set()
             articles = []
+            
             for article in results:
                 # Skip articles without descriptions or links
                 if not article.get('description') or not article.get('link'):
@@ -59,6 +64,12 @@ class NewsService:
                 
                 # Create a unique article ID based on url or title
                 article_id = article.get('article_id') or article.get('link')
+                
+                # Skip if we've already seen this article
+                if article_id in seen_article_ids:
+                    continue
+                
+                seen_article_ids.add(article_id)
                     
                 articles.append({
                     'title': article.get('title', 'Untitled Article'),
@@ -67,10 +78,10 @@ class NewsService:
                     'source': article.get('source_id', 'Unknown Source'),
                     'published_at': self._format_date(article.get('pubDate')),
                     'url': article.get('link', '#'),
-                    'id': article_id  # Add unique ID for deduplication
+                    'id': article_id
                 })
             
-            logger.info(f"Processed {len(articles)} valid articles")
+            logger.info(f"Processed {len(articles)} valid articles after deduplication")
             return articles, next_page
         except Exception as e:
             logger.error(f"Error fetching headlines: {str(e)}")
@@ -203,6 +214,42 @@ class NewsService:
         except Exception as e:
             logger.error(f"Error searching news: {str(e)}")
             return [], None
+
+    def get_local_news(self, country=None, city=None, state=None):
+        """Fetch local news based on country, state, and city"""
+        try:
+            # Build query parameters
+            params = {
+                'apikey': self.api_key,
+                'language': 'en',
+                'size': 10  # Set equal limit for all news types
+            }
+            
+            # Add location parameters if provided
+            if country:
+                params['country'] = country
+            if state:
+                params['q'] = f"{state} OR {city}" if city else state
+            elif city:
+                params['q'] = city
+            
+            # Make API request
+            response = requests.get(self.base_url, params=params)
+            response.raise_for_status()
+            
+            # Parse response
+            data = response.json()
+            
+            if data.get('status') == 'success':
+                articles = data.get('results', [])
+                return self._format_articles(articles)
+            else:
+                logger.error(f"Error fetching local news: {data.get('message', 'Unknown error')}")
+                return []
+                
+        except Exception as e:
+            logger.error(f"Error in get_local_news: {str(e)}")
+            return []
 
     def _format_date(self, date_str):
         if not date_str:

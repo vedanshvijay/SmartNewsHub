@@ -2,84 +2,80 @@
 // Moves the dropdown menu to the body and positions it below the button
 
 document.addEventListener('DOMContentLoaded', function() {
-    const dropdownButtons = document.querySelectorAll('.category-btn');
-    let openDropdown = null;
-    let openButton = null;
-
-    function positionDropdown(content, button) {
-        const rect = button.getBoundingClientRect();
-        content.style.left = rect.left + window.scrollX + 'px';
-        content.style.top = rect.bottom + window.scrollY + 'px';
-        content.style.minWidth = rect.width + 'px';
-    }
-
-    dropdownButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
+    // Handle category dropdown
+    const categoryBtn = document.querySelector('.category-btn');
+    const categoryContent = document.querySelector('.category-content');
+    
+    if (categoryBtn && categoryContent) {
+        categoryBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            e.stopPropagation();
-
-            // Find the parent dropdown container
-            const dropdown = this.closest('.category-dropdown');
-            const content = dropdown.querySelector('.category-content');
-
-            // Close any open dropdowns
-            document.querySelectorAll('.category-content.open').forEach(el => {
-                el.classList.remove('open');
-                if (el.parentNode === document.body && el !== content) {
-                    if (el._originalParent) {
-                        el._originalParent.appendChild(el);
-                        el._originalParent = null;
-                    }
+            categoryContent.classList.toggle('show');
+            
+            // Toggle chevron icon
+            const chevron = this.querySelector('.fa-chevron-down');
+            chevron.classList.toggle('fa-chevron-up');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!categoryBtn.contains(e.target) && !categoryContent.contains(e.target)) {
+                categoryContent.classList.remove('show');
+                const chevron = categoryBtn.querySelector('.fa-chevron-down');
+                chevron.classList.remove('fa-chevron-up');
+            }
+        });
+        
+        // Handle category selection
+        const categoryItems = categoryContent.querySelectorAll('.category-item');
+        categoryItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const category = this.textContent.trim();
+                
+                // Update button text
+                categoryBtn.querySelector('span').textContent = category;
+                
+                // Close dropdown
+                categoryContent.classList.remove('show');
+                const chevron = categoryBtn.querySelector('.fa-chevron-down');
+                chevron.classList.remove('fa-chevron-up');
+                
+                // Here you would typically make an AJAX call to filter news by category
+                console.log(`Filtering news by category: ${category}`);
+                
+                // Show loading state
+                const newsContainer = document.querySelector('#global-news-container, #indian-news-container');
+                if (newsContainer) {
+                    newsContainer.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
                 }
             });
-
-            if (content.classList.contains('open')) {
-                content.classList.remove('open');
-                if (content.parentNode === document.body && content._originalParent) {
-                    content._originalParent.appendChild(content);
-                    content._originalParent = null;
-                }
-                openDropdown = null;
-                openButton = null;
-                return;
-            }
-
-            // Move the dropdown to the body
-            if (content.parentNode !== document.body) {
-                content._originalParent = content.parentNode;
-                document.body.appendChild(content);
-            }
-
-            // Position the dropdown
-            positionDropdown(content, this);
-            content.classList.add('open');
-            openDropdown = content;
-            openButton = this;
         });
+    }
+    
+    // Add fade-in animation to news articles
+    const newsArticles = document.querySelectorAll('.news-article');
+    newsArticles.forEach((article, index) => {
+        article.style.animationDelay = `${index * 0.1}s`;
+        article.classList.add('fade-in');
     });
-
-    // Only close dropdowns when clicking outside
-    document.addEventListener('mousedown', function(e) {
-        if (openDropdown && !e.target.closest('.category-content') && !e.target.closest('.category-btn')) {
-            openDropdown.classList.remove('open');
-            if (openDropdown.parentNode === document.body && openDropdown._originalParent) {
-                openDropdown._originalParent.appendChild(openDropdown);
-                openDropdown._originalParent = null;
+    
+    // Handle responsive adjustments
+    function handleResponsive() {
+        const navbar = document.querySelector('.navbar');
+        const searchForm = document.querySelector('.navbar .d-flex');
+        
+        if (window.innerWidth < 768) {
+            if (searchForm) {
+                searchForm.classList.add('mt-3');
             }
-            openDropdown = null;
-            openButton = null;
+        } else {
+            if (searchForm) {
+                searchForm.classList.remove('mt-3');
+            }
         }
-    });
-
-    // On window scroll/resize, reposition the dropdown if open
-    window.addEventListener('scroll', function() {
-        if (openDropdown && openButton) {
-            positionDropdown(openDropdown, openButton);
-        }
-    });
-    window.addEventListener('resize', function() {
-        if (openDropdown && openButton) {
-            positionDropdown(openDropdown, openButton);
-        }
-    });
+    }
+    
+    // Initial call and event listener for responsive adjustments
+    handleResponsive();
+    window.addEventListener('resize', handleResponsive);
 }); 

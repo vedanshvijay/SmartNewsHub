@@ -20,7 +20,7 @@ class FactsService:
                 fact_data = response.json()
                 self.cached_fact = {
                     'text': fact_data['text'],
-                    'source': fact_data.get('source', 'Useless Facts API'),
+                    'source': 'PlanetPulse',
                     'permalink': fact_data.get('permalink', '')
                 }
                 self.last_fetch_time = datetime.now()
@@ -28,13 +28,13 @@ class FactsService:
             else:
                 return {
                     'text': "Did you know? The internet is full of interesting facts, but sometimes they're hard to find!",
-                    'source': 'SmartNewsHub',
+                    'source': 'PlanetPulse',
                     'permalink': ''
                 }
         except Exception as e:
             print(f"Error fetching fact: {str(e)}")
             return {
                 'text': "Did you know? Even the most reliable systems sometimes need a break!",
-                'source': 'SmartNewsHub',
+                'source': 'PlanetPulse',
                 'permalink': ''
             } 

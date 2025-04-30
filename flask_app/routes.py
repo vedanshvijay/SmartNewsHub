@@ -1,6 +1,8 @@
-from flask import Blueprint, render_template, request, url_for, redirect, jsonify, session
+from flask import Blueprint, render_template, request, url_for, redirect, jsonify, session, flash, current_app
 from flask_app import cache, news_service, facts_service
 from urllib.parse import quote_plus
+from newsapi import NewsApiClient
+import os
 
 main = Blueprint('main', __name__)
 
@@ -87,14 +89,21 @@ def category(category_name):
         cache.set(cache_key, articles, timeout=1800)
         cache.set(f'{cache_key}_next_page', next_page, timeout=1800)
     
+    # Get seen articles from session or initialize empty set
+    seen_articles = set(session.get(f'seen_{category_name_lower}_articles', []))
+    
+    # Filter out seen articles
+    new_articles = [article for article in articles if article['id'] not in seen_articles]
+    
+    # Update seen articles in session
+    seen_articles.update(article['id'] for article in new_articles)
+    session[f'seen_{category_name_lower}_articles'] = list(seen_articles)
+    
     # Store next page token in session for load more functionality
     session[f'category_{category_name_lower}_next_page'] = next_page
     
-    # Track which articles we've shown for this category to avoid duplication
-    session[f'shown_category_{category_name_lower}_articles'] = [article['url'] for article in articles]
-    
     return render_template('category.html',
-                         articles=articles,
+                         articles=new_articles,
                          category=category_name_lower,
                          categories=VALID_CATEGORIES)
 
@@ -102,28 +111,37 @@ def category(category_name):
 def search():
     query = request.args.get('q', '')
     if not query:
+        return redirect(url_for('main.index'))
+    
+    try:
+        # Debug logging
+        current_app.logger.info(f"Searching for query: {query}")
+        current_app.logger.info(f"NewsService API Key: {news_service.api_key[:5]}...")
+        
+        # Use the news_service that's already configured for NewsData.io
+        articles, next_page = news_service.search_news(query)
+        
+        # Debug logging
+        current_app.logger.info(f"Found {len(articles)} articles")
+        
+        if not articles:
+            flash('No results found for your search query.', 'info')
+            return render_template('search.html', 
+                                query=query,
+                                articles=[],
+                                total_results=0)
+        
+        # The articles are already formatted correctly by news_service.py
+        # No need to reformat them as they match our template's expected structure
         return render_template('search.html', 
-                             articles=[],
-                             query='',
-                             categories=VALID_CATEGORIES)
-    
-    # For search, we don't cache results as they are dynamic
-    articles, next_page = news_service.search_news(query)
-    
-    # Store next page token in session for load more functionality
-    session[f'search_{query}_next_page'] = next_page
-    
-    # Track which articles we've shown for this search to avoid duplication
-    session[f'shown_search_{query}_articles'] = [article['url'] for article in articles]
-    
-    # Create a clean, SEO-friendly URL for sharing
-    clean_url = url_for('main.search', q=quote_plus(query), _external=True)
-    
-    return render_template('search.html',
-                         articles=articles,
-                         query=query,
-                         clean_url=clean_url,
-                         categories=VALID_CATEGORIES)
+                            query=query,
+                            articles=articles,
+                            total_results=len(articles))
+        
+    except Exception as e:
+        current_app.logger.error(f"Error in search: {str(e)}")
+        flash('An error occurred while searching. Please try again.', 'error')
+        return redirect(url_for('main.index'))
 
 @main.route('/api/fact/random')
 def random_fact():
@@ -237,4 +255,30 @@ def more_search_results():
     return jsonify({
         'articles': filtered_articles,
         'has_more': bool(new_next_page) and len(filtered_articles) > 0
-    }) 
+    })
+
+@main.route('/settings')
+def settings():
+    """Route for user settings page"""
+    return render_template('settings.html', categories=VALID_CATEGORIES)
+
+@main.route('/location')
+def location():
+    return render_template('location.html')
+
+@main.route('/local')
+def local_news():
+    """Route for local news based on user's location"""
+    # Get location from session or default to None
+    country = session.get('country')
+    state = session.get('state')
+    city = session.get('city')
+    
+    # Fetch local news with all location parameters
+    articles = news_service.get_local_news(country=country, state=state, city=city)
+    
+    return render_template('local.html', 
+                         articles=articles, 
+                         country=country, 
+                         state=state,
+                         city=city) 

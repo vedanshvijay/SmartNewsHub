@@ -1,26 +1,55 @@
 {% extends "base.html" %}
 
-{% block title %}Home - Latest Global & Indian News | SmartNewsHub{% endblock %}
-{% block meta_description %}Get the latest news from around the world and India. SmartNewsHub brings you breaking news, trending stories and in-depth coverage across business, technology, sports and more.{% endblock %}
-{% block og_title %}Latest Global & Indian News | SmartNewsHub{% endblock %}
-{% block og_description %}Stay informed with the latest breaking news from around the world and India on SmartNewsHub. Your intelligent news aggregation platform.{% endblock %}
+{% block title %}Home - Latest Global & Indian News | PlanetPulse{% endblock %}
+{% block meta_description %}Get the latest news from around the world and India. PlanetPulse brings you breaking news, trending stories and in-depth coverage across business, technology, sports and more.{% endblock %}
+{% block og_title %}Latest Global & Indian News | PlanetPulse{% endblock %}
+{% block og_description %}Stay informed with the latest breaking news from around the world and India on PlanetPulse. Your intelligent news aggregation platform.{% endblock %}
 
 {% block content %}
 <div class="container">
-    <!-- Hero Section -->
+    <!-- Hero Section with Search -->
     <section class="row mb-5">
-        <div class="col-12 text-center">
+        <div class="col-12">
             <div class="hero-card card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <h1 class="display-4 fw-bold mb-3">Welcome to PlanetPulse</h1>
+                    <p class="lead text-muted mb-4">Your intelligent news aggregation platform</p>
+                    <div class="search-container mx-auto" style="max-width: 600px;">
+                        <form class="d-flex">
+                            <input class="form-control form-control-lg me-2" type="search" placeholder="Search for news, topics, or categories..." aria-label="Search">
+                            <button class="btn btn-primary btn-lg" type="submit"><i class="fas fa-search me-2"></i>Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Topics Section -->
+    <section class="row mb-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h2 class="h4 mb-0"><i class="fas fa-fire me-2 text-danger"></i>Trending Topics</h2>
+                </div>
                 <div class="card-body">
-                    <h1 class="display-4 fw-bold">Welcome to SmartNewsHub</h1>
-                    <p class="lead text-muted">Your intelligent news aggregation platform</p>
+                    <div class="trending-topics">
+                        <a href="{{ url_for('main.category', category_name='technology') }}" class="badge bg-primary text-white me-2 mb-2 p-2" style="text-decoration: none;">#Technology</a>
+                        <a href="{{ url_for('main.category', category_name='business') }}" class="badge bg-success text-white me-2 mb-2 p-2" style="text-decoration: none;">#Business</a>
+                        <a href="{{ url_for('main.category', category_name='sports') }}" class="badge bg-info text-white me-2 mb-2 p-2" style="text-decoration: none;">#Sports</a>
+                        <a href="{{ url_for('main.category', category_name='politics') }}" class="badge bg-warning text-dark me-2 mb-2 p-2" style="text-decoration: none;">#Politics</a>
+                        <a href="{{ url_for('main.category', category_name='health') }}" class="badge bg-danger text-white me-2 mb-2 p-2" style="text-decoration: none;">#Health</a>
+                        <a href="{{ url_for('main.category', category_name='education') }}" class="badge bg-secondary text-white me-2 mb-2 p-2" style="text-decoration: none;">#Education</a>
+                        <a href="{{ url_for('main.category', category_name='entertainment') }}" class="badge bg-dark text-white me-2 mb-2 p-2" style="text-decoration: none;">#Entertainment</a>
+                        <a href="{{ url_for('main.category', category_name='science') }}" class="badge bg-primary text-white me-2 mb-2 p-2" style="text-decoration: none;">#Science</a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Did You Know Section -->
-    <section class="row mb-4">
+    <section class="row mb-5">
         <div class="col-12">
             <div class="fact-card card border-0 shadow-sm">
                 <div class="fact-card-header">
@@ -40,16 +69,7 @@
                     <h2 class="fact-title">Did You Know?</h2>
                     <p class="fact-text">{{ daily_fact.text }}</p>
                     <div class="fact-footer">
-                        <div class="fact-source">
-                            <i class="fas fa-info-circle"></i>
-                            <span>{{ daily_fact.source }}</span>
-                        </div>
-                        {% if daily_fact.permalink %}
-                        <a href="{{ daily_fact.permalink }}" class="fact-link" target="_blank" rel="noopener noreferrer">
-                            <i class="fas fa-external-link-alt"></i>
-                            View Source
-                        </a>
-                        {% endif %}
+                         
                     </div>
                 </div>
             </div>
@@ -64,19 +84,7 @@
                     <h2 class="section-title mb-0">
                         <i class="fas fa-newspaper me-2"></i>Latest Headlines
                     </h2>
-                    <div class="category-dropdown">
-                        <button class="category-btn">
-                            <i class="fas fa-filter me-1"></i>Categories
-                            <i class="fas fa-chevron-down ms-1"></i>
-                        </button>
-                        <div class="category-content">
-                            {% for category in categories %}
-                            <a class="category-item" href="{{ url_for('main.category', category_name=category) }}">
-                                {{ category|title }}
-                            </a>
-                            {% endfor %}
-                        </div>
-                    </div>
+               
                 </div>
             </div>
         </div>
@@ -85,10 +93,14 @@
             <!-- Global News Column -->
             <div class="col-md-6">
                 <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h3 class="h4 mb-0">
                             <i class="fas fa-globe me-2"></i>Global News
                         </h3>
+                        <div class="news-filters">
+                            <button class="btn btn-sm btn-outline-light me-2" data-filter="latest">Latest</button>
+                            <button class="btn btn-sm btn-outline-light" data-filter="popular">Popular</button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div id="global-news-container">
@@ -108,9 +120,19 @@
                                         {% else %}
                                             <p class="card-text text-muted">No description available.</p>
                                         {% endif %}
-                                        <a href="{{ article.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
-                                            Read More <i class="fas fa-external-link-alt ms-1"></i>
-                                        </a>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <a href="{{ article.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                                Read More <i class="fas fa-external-link-alt ms-1"></i>
+                                            </a>
+                                            <div class="article-actions">
+                                                <button class="btn btn-sm btn-outline-secondary me-2" title="Save for later">
+                                                    <i class="far fa-bookmark"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary" title="Share">
+                                                    <i class="fas fa-share-alt"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                         <hr class="my-3">
                                     </div>
                                 {% endfor %}
@@ -130,10 +152,14 @@
             <!-- Indian News Column -->
             <div class="col-md-6">
                 <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-success text-white">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                         <h3 class="h4 mb-0">
                             <i class="fas fa-map-marker-alt me-2"></i>Indian News
                         </h3>
+                        <div class="news-filters">
+                            <button class="btn btn-sm btn-outline-light me-2" data-filter="latest">Latest</button>
+                            <button class="btn btn-sm btn-outline-light" data-filter="popular">Popular</button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div id="indian-news-container">
@@ -153,9 +179,19 @@
                                         {% else %}
                                             <p class="card-text text-muted">No description available.</p>
                                         {% endif %}
-                                        <a href="{{ article.url }}" class="btn btn-sm btn-outline-success" target="_blank">
-                                            Read More <i class="fas fa-external-link-alt ms-1"></i>
-                                        </a>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <a href="{{ article.url }}" class="btn btn-sm btn-outline-success" target="_blank">
+                                                Read More <i class="fas fa-external-link-alt ms-1"></i>
+                                            </a>
+                                            <div class="article-actions">
+                                                <button class="btn btn-sm btn-outline-secondary me-2" title="Save for later">
+                                                    <i class="far fa-bookmark"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary" title="Share">
+                                                    <i class="fas fa-share-alt"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                         <hr class="my-3">
                                     </div>
                                 {% endfor %}
@@ -169,6 +205,24 @@
                             </button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Subscription -->
+    <section class="row mb-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-4">
+                    <h2 class="h4 mb-3">Stay Updated with PlanetPulse</h2>
+                    <p class="text-muted mb-4">Subscribe to our newsletter for daily news updates and exclusive content.</p>
+                    <form class="newsletter-form mx-auto" style="max-width: 500px;">
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Enter your email address" required>
+                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

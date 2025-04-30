@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Location Settings | PlanetPulse{% endblock %}
+{% block meta_description %}Set your location preferences for personalized news on PlanetPulse.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="card-title mb-4">Location Settings</h1>
+                    
+                    <div class="location-section mb-4">
+                        <h5 class="mb-3">Current Location</h5>
+                        <div class="current-location d-flex align-items-center mb-3">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                            <span id="currentLocation" class="text-muted">Detecting your location...</span>
+                        </div>
+                        <button id="detectLocation" class="btn btn-outline-primary">
+                            <i class="fas fa-location-arrow me-2"></i>Detect My Location
+                        </button>
+                    </div>
+
+                    <div class="location-section">
+                        <h5 class="mb-3">Select Preferred Location</h5>
+                        <div class="form-group mb-3">
+                            <label for="countrySelect" class="form-label">Country</label>
+                            <select class="form-select" id="countrySelect">
+                                <option value="">Select Country</option>
+                                <option value="in">India</option>
+                                <option value="us">United States</option>
+                                <option value="gb">United Kingdom</option>
+                                <option value="ca">Canada</option>
+                                <option value="au">Australia</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="citySelect" class="form-label">City</label>
+                            <select class="form-select" id="citySelect" disabled>
+                                <option value="">Select City</option>
+                            </select>
+                        </div>
+
+                        <button id="saveLocation" class="btn btn-primary" disabled>
+                            <i class="fas fa-save me-2"></i>Save Location
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const detectBtn = document.getElementById('detectLocation');
+    const currentLocation = document.getElementById('currentLocation');
+    const countrySelect = document.getElementById('countrySelect');
+    const citySelect = document.getElementById('citySelect');
+    const saveBtn = document.getElementById('saveLocation');
+
+    // City options for each country
+    const cities = {
+        'in': ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata'],
+        'us': ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'],
+        'gb': ['London', 'Manchester', 'Birmingham', 'Glasgow', 'Liverpool'],
+        'ca': ['Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Ottawa'],
+        'au': ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide']
+    };
+
+    // Handle country selection
+    countrySelect.addEventListener('change', function() {
+        const selectedCountry = this.value;
+        citySelect.innerHTML = '<option value="">Select City</option>';
+        
+        if (selectedCountry) {
+            citySelect.disabled = false;
+            cities[selectedCountry].forEach(city => {
+                const option = document.createElement('option');
+                option.value = city.toLowerCase();
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+        } else {
+            citySelect.disabled = true;
+        }
+    });
+
+    // Handle city selection
+    citySelect.addEventListener('change', function() {
+        saveBtn.disabled = !this.value;
+    });
+
+    // Detect current location
+    detectBtn.addEventListener('click', function() {
+        if (navigator.geolocation) {
+            detectBtn.disabled = true;
+            currentLocation.textContent = 'Detecting location...';
+            
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    
+                    // Use a geocoding service to get city name
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const city = data.address.city || data.address.town || data.address.village;
+                            const country = data.address.country;
+                            
+                            currentLocation.textContent = `${city}, ${country}`;
+                            detectBtn.disabled = false;
+                            
+                            // Auto-select the detected country and city if available
+                            const countryCode = getCountryCode(country);
+                            if (countryCode) {
+                                countrySelect.value = countryCode;
+                                countrySelect.dispatchEvent(new Event('change'));
+                                
+                                // Find and select the city
+                                const cityOption = Array.from(citySelect.options).find(
+                                    option => option.text.toLowerCase() === city.toLowerCase()
+                                );
+                                if (cityOption) {
+                                    cityOption.selected = true;
+                                    citySelect.dispatchEvent(new Event('change'));
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            currentLocation.textContent = 'Error detecting location';
+                            detectBtn.disabled = false;
+                        });
+                },
+                function(error) {
+                    currentLocation.textContent = 'Location detection failed';
+                    detectBtn.disabled = false;
+                }
+            );
+        } else {
+            currentLocation.textContent = 'Geolocation is not supported by your browser';
+        }
+    });
+
+    // Helper function to get country code
+    function getCountryCode(countryName) {
+        const countryCodes = {
+            'India': 'in',
+            'United States': 'us',
+            'United Kingdom': 'gb',
+            'Canada': 'ca',
+            'Australia': 'au'
+        };
+        return countryCodes[countryName] || null;
+    }
+
+    // Save location preference
+    saveBtn.addEventListener('click', function() {
+        const country = countrySelect.value;
+        const city = citySelect.value;
+        
+        // Save to localStorage
+        localStorage.setItem('preferredCountry', country);
+        localStorage.setItem('preferredCity', city);
+        
+        // Show success message
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-success alert-dismissible fade show mt-3';
+        alert.innerHTML = `
+            Location saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        document.querySelector('.card-body').appendChild(alert);
+        
+        // Redirect to home page after 1.5 seconds
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 1500);
+    });
+});
+</script>
+{% endblock %} 

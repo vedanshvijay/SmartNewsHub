@@ -1,5 +1,5 @@
 // Add any custom JavaScript here
-console.log('SmartNewsHub is running!');
+console.log('PlanetPulse is running!');
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all Bootstrap dropdowns
@@ -218,4 +218,176 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadBtn.disabled = false;
             });
     }
+
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Initialize Bootstrap popovers
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        return new bootstrap.Popover(popoverTriggerEl);
+    });
+});
+
+// Handle news filtering
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filterType = this.dataset.filter;
+            const newsContainer = this.closest('.card').querySelector('.card-body');
+            
+            // Remove active class from all buttons in the same container
+            this.closest('.news-filters').querySelectorAll('button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Here you would typically make an AJAX call to get filtered news
+            // For now, we'll just show a loading state
+            newsContainer.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Replace with actual API call
+                console.log(`Filtering news by: ${filterType}`);
+            }, 1000);
+        });
+    });
+});
+
+// Handle article actions (save and share)
+document.addEventListener('DOMContentLoaded', function() {
+    const articleActions = document.querySelectorAll('.article-actions');
+    
+    articleActions.forEach(actions => {
+        // Save for later functionality
+        const saveButton = actions.querySelector('[title="Save for later"]');
+        if (saveButton) {
+            saveButton.addEventListener('click', function() {
+                const article = this.closest('.news-article');
+                const articleId = article.dataset.articleId; // You'll need to add this data attribute
+                
+                // Toggle save state
+                this.classList.toggle('active');
+                this.querySelector('i').classList.toggle('far');
+                this.querySelector('i').classList.toggle('fas');
+                
+                // Here you would typically make an AJAX call to save/unsave the article
+                console.log(`Article ${articleId} saved/unsaved`);
+            });
+        }
+        
+        // Share functionality
+        const shareButton = actions.querySelector('[title="Share"]');
+        if (shareButton) {
+            shareButton.addEventListener('click', function() {
+                const article = this.closest('.news-article');
+                const articleUrl = article.querySelector('a[target="_blank"]').href;
+                const articleTitle = article.querySelector('h4').textContent;
+                
+                // Create share options
+                const shareOptions = {
+                    title: articleTitle,
+                    url: articleUrl
+                };
+                
+                // Use Web Share API if available
+                if (navigator.share) {
+                    navigator.share(shareOptions)
+                        .catch(error => console.log('Error sharing:', error));
+                } else {
+                    // Fallback to copying to clipboard
+                    navigator.clipboard.writeText(articleUrl)
+                        .then(() => {
+                            const tooltip = new bootstrap.Tooltip(this, {
+                                title: 'Link copied to clipboard!',
+                                trigger: 'manual'
+                            });
+                            tooltip.show();
+                            setTimeout(() => tooltip.dispose(), 2000);
+                        })
+                        .catch(err => console.error('Failed to copy:', err));
+                }
+            });
+        }
+    });
+});
+
+// Handle newsletter subscription
+document.addEventListener('DOMContentLoaded', function() {
+    const newsletterForm = document.querySelector('.newsletter-form');
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const emailInput = this.querySelector('input[type="email"]');
+            const email = emailInput.value;
+            
+            // Here you would typically make an AJAX call to subscribe
+            // For now, we'll just show a success message
+            emailInput.value = '';
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success mt-3';
+            alert.textContent = 'Thank you for subscribing!';
+            this.appendChild(alert);
+            
+            setTimeout(() => alert.remove(), 3000);
+        });
+    }
+});
+
+// Handle load more functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const loadMoreButtons = document.querySelectorAll('[id^="load-more-"]');
+    
+    loadMoreButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const type = this.dataset.type;
+            const page = parseInt(this.dataset.page) + 1;
+            const container = document.getElementById(`${type}-news-container`);
+            
+            // Show loading state
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+            
+            // Here you would typically make an AJAX call to load more news
+            // For now, we'll just simulate the API call
+            setTimeout(() => {
+                // Update page number
+                this.dataset.page = page;
+                
+                // Reset button state
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-plus-circle me-1"></i>Load More';
+                
+                // Here you would append the new articles to the container
+                console.log(`Loading more ${type} news, page ${page}`);
+            }, 1000);
+        });
+    });
+});
+
+// Handle trending topics
+document.addEventListener('DOMContentLoaded', function() {
+    const trendingTopics = document.querySelectorAll('.trending-topics .badge');
+    
+    trendingTopics.forEach(topic => {
+        topic.addEventListener('click', function(e) {
+            e.preventDefault();
+            const topicName = this.textContent.replace('#', '');
+            
+            // Here you would typically make an AJAX call to filter news by topic
+            console.log(`Filtering news by topic: ${topicName}`);
+            
+            // Update active state
+            trendingTopics.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
 }); 

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Settings | PlanetPulse{% endblock %}
+{% block meta_description %}Customize your PlanetPulse experience with personalized settings.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 col-md-8 mx-auto">
+            <h1 class="mb-4">Settings</h1>
+            
+            <div class="settings-section">
+                <h3>Appearance</h3>
+                <div class="settings-option">
+                    <div class="settings-label">
+                        Dark Mode
+                        <p class="text-muted mb-0 small">Switch between light and dark themes</p>
+                    </div>
+                    <button class="theme-toggle" data-theme="light" onclick="toggleTheme()">
+                        <i class="fas fa-sun"></i>
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleTheme() {
+    const toggle = document.querySelector('.theme-toggle');
+    const currentTheme = toggle.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    // Update button state
+    toggle.setAttribute('data-theme', newTheme);
+    
+    // Update document theme
+    document.documentElement.setAttribute('data-theme', newTheme);
+    
+    // Save preference
+    localStorage.setItem('theme', newTheme);
+}
+
+// Set initial theme
+document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    const toggle = document.querySelector('.theme-toggle');
+    
+    toggle.setAttribute('data-theme', savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
+});
+</script>
+{% endblock %} 

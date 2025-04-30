@@ -4,8 +4,10 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from dotenv import load_dotenv
 import os
+import pytz
 from .news_service import NewsService
 from .facts_service import FactsService
+from .auth import login_manager
 
 load_dotenv()
 
@@ -16,7 +18,8 @@ cache = Cache(config={
     'CACHE_THRESHOLD': 1000
 })
 
-scheduler = BackgroundScheduler()
+# Initialize scheduler with pytz timezone
+scheduler = BackgroundScheduler(timezone=pytz.UTC)
 news_service = NewsService()
 facts_service = FactsService()
 
@@ -26,6 +29,9 @@ def create_app():
     
     # Initialize cache with app context
     cache.init_app(app)
+    
+    # Initialize login manager
+    login_manager.init_app(app)
     
     # Register blueprints
     from .routes import main
