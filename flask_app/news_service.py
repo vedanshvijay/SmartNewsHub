@@ -10,11 +10,16 @@ class NewsService:
         self.api_key = os.getenv('NEWS_API_KEY')
         self.base_url = "https://api.thenewsapi.com/v1/news"
         print(f"Loading API key: {self.api_key[:5]}...")  # Print first 5 chars for security
+        # Store already fetched articles to avoid duplicates
+        self.cached_articles = {
+            'global': [],
+            'indian': []
+        }
 
-    def get_headlines(self, country=None, category=None, page_size=20):
+    def get_headlines(self, country=None, category=None, page_size=20, page=1):
         """Get top headlines, optionally by country or category"""
         try:
-            print(f"Fetching headlines for country: {country}, category: {category}")  # Debug log
+            print(f"Fetching headlines for country: {country}, category: {category}, page: {page}")
             
             # For TheNewsAPI, we'll use the top_stories endpoint
             endpoint = f"{self.base_url}/top"
@@ -31,7 +36,14 @@ class NewsService:
             # Map country to locale in TheNewsAPI
             if country:
                 params['locale'] = country
-            
+                
+            # If page > 1, we need to fetch new articles that haven't been seen before
+            # Since TheNewsAPI doesn't support direct pagination, we'll increase the limit
+            # and then filter out already seen articles
+            if page > 1:
+                # Increase the fetch count to get more articles
+                params['limit'] = page_size * 2
+                
             response = requests.get(endpoint, params=params)
             response.raise_for_status()  # Raise exception for HTTP errors
             
@@ -41,27 +53,47 @@ class NewsService:
                 print(f"Error response: {data}")
                 return []
 
+            all_articles = data.get('data', [])
             formatted_articles = []
-            for article in data.get('data', []):
-                formatted_articles.append({
+            
+            # Create a set of already seen article URLs for easy lookup
+            cached_urls = {article['url'] for article in self.cached_articles['global']}
+            
+            # Process new articles
+            new_articles = []
+            for article in all_articles:
+                # Skip if we've already processed this article
+                if article.get('url') in cached_urls:
+                    continue
+                    
+                formatted_article = {
                     'title': article.get('title', 'Untitled Article'),
                     'description': article.get('description', 'No description available'),
                     'image_url': article.get('image_url'),
                     'source': article.get('source', 'Unknown Source'),
                     'published_at': self._format_date(article.get('published_at')),
                     'url': article.get('url', '#')
-                })
+                }
+                
+                new_articles.append(formatted_article)
+                cached_urls.add(article.get('url', '#'))
+                
+                if len(new_articles) >= page_size:
+                    break
             
-            print(f"Successfully fetched {len(formatted_articles)} articles")  # Debug log
-            return formatted_articles
+            # Update our cache with new articles
+            self.cached_articles['global'].extend(new_articles)
+            
+            print(f"Successfully fetched {len(new_articles)} new articles")
+            return new_articles
         except Exception as e:
             print(f"Error fetching headlines for {country}: {str(e)}")
             return []
 
-    def get_indian_news(self, page_size=10):
+    def get_indian_news(self, page_size=10, page=1):
         """Get Indian news"""
         try:
-            print("Fetching Indian news via search...")
+            print(f"Fetching Indian news via search... page: {page}")
             
             endpoint = f"{self.base_url}/all"
             
@@ -73,6 +105,10 @@ class NewsService:
                 'limit': page_size
             }
             
+            # If page > 1, fetch more articles to find new ones
+            if page > 1:
+                params['limit'] = page_size * 2
+            
             response = requests.get(endpoint, params=params)
             response.raise_for_status()
             
@@ -82,19 +118,38 @@ class NewsService:
                 print(f"Error response for Indian news search: {data}")
                 return []
 
-            formatted_articles = []
-            for article in data.get('data', []):
-                formatted_articles.append({
+            all_articles = data.get('data', [])
+            
+            # Create a set of already seen article URLs for easy lookup
+            cached_urls = {article['url'] for article in self.cached_articles['indian']}
+            
+            # Process new articles
+            new_articles = []
+            for article in all_articles:
+                # Skip if we've already processed this article
+                if article.get('url') in cached_urls:
+                    continue
+                
+                formatted_article = {
                     'title': article.get('title', 'Untitled Article'),
                     'description': article.get('description', 'No description available'),
                     'image_url': article.get('image_url'),
                     'source': article.get('source', 'Unknown Source'),
                     'published_at': self._format_date(article.get('published_at')),
                     'url': article.get('url', '#')
-                })
+                }
+                
+                new_articles.append(formatted_article)
+                cached_urls.add(article.get('url', '#'))
+                
+                if len(new_articles) >= page_size:
+                    break
             
-            print(f"Successfully fetched {len(formatted_articles)} Indian articles via search")
-            return formatted_articles
+            # Update our cache with new articles
+            self.cached_articles['indian'].extend(new_articles)
+            
+            print(f"Successfully fetched {len(new_articles)} new Indian articles")
+            return new_articles
         except Exception as e:
             print(f"Error fetching Indian news: {str(e)}")
             return []

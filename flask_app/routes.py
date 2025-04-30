@@ -97,11 +97,8 @@ def more_global_news():
     page = int(request.args.get('page', 1))
     page_size = int(request.args.get('page_size', 10))
     
-    # Calculate offset based on page number (page 1 = already loaded initial articles)
-    offset = page * page_size
-    
-    # Fetch news with the calculated offset
-    articles = news_service.get_headlines(country='us', page_size=page_size)
+    # Fetch news with the page number
+    articles = news_service.get_headlines(country='us', page_size=page_size, page=page)
     
     return jsonify({
         'articles': articles,
@@ -114,8 +111,8 @@ def more_indian_news():
     page = int(request.args.get('page', 1))
     page_size = int(request.args.get('page_size', 10))
     
-    # Fetch more Indian news
-    articles = news_service.get_indian_news(page_size=page_size)
+    # Fetch more Indian news with page number
+    articles = news_service.get_indian_news(page_size=page_size, page=page)
     
     return jsonify({
         'articles': articles,

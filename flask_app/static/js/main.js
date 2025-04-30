@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function loadMoreNews(type, page) {
         const url = `/api/news/${type}?page=${page}&page_size=10`;
         const loadBtn = document.getElementById(`load-more-${type}`);
-        loadBtn.textContent = 'Loading...';
+        loadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
         loadBtn.disabled = true;
 
         fetch(url)
@@ -125,37 +125,47 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         
                         html += `
-                            <h4><a href="${article.url}" target="_blank">${article.title}</a></h4>
-                            <p class="text-muted">
-                                <small>Source: ${article.source} | ${article.published_at || 'N/A'}</small>
+                            <h4 class="h5"><a href="${article.url}" target="_blank" class="text-decoration-none">${article.title}</a></h4>
+                            <p class="text-muted small">
+                                <i class="fas fa-newspaper me-1"></i>${article.source} 
+                                <i class="far fa-clock ms-2 me-1"></i>${article.published_at || 'N/A'}
                             </p>
                         `;
                         
                         if (article.description) {
-                            html += `<p>${article.description.length > 150 ? article.description.substring(0, 150) + '...' : article.description}</p>`;
+                            html += `<p class="card-text">${article.description.length > 150 ? article.description.substring(0, 150) + '...' : article.description}</p>`;
                         } else {
-                            html += `<p>No description available.</p>`;
+                            html += `<p class="card-text text-muted">No description available.</p>`;
                         }
+                        
+                        // Add read more button matching the styling of the existing articles
+                        const btnClass = type === 'global' ? 'btn-outline-primary' : 'btn-outline-success';
+                        html += `
+                            <a href="${article.url}" class="btn btn-sm ${btnClass}" target="_blank">
+                                Read More <i class="fas fa-external-link-alt ms-1"></i>
+                            </a>
+                            <hr class="my-3">
+                        `;
                         
                         articleDiv.innerHTML = html;
                         container.appendChild(articleDiv);
                     });
                     
-                    loadBtn.textContent = 'Load More';
+                    loadBtn.innerHTML = '<i class="fas fa-plus-circle me-1"></i>Load More';
                     loadBtn.disabled = false;
                     
-                    if (!data.has_more) {
-                        loadBtn.textContent = 'No More Articles';
+                    if (data.articles.length < 5) {
+                        loadBtn.innerHTML = 'No More Articles';
                         loadBtn.disabled = true;
                     }
                 } else {
-                    loadBtn.textContent = 'No More Articles';
+                    loadBtn.innerHTML = 'No More Articles';
                     loadBtn.disabled = true;
                 }
             })
             .catch(error => {
                 console.error(`Error loading more ${type} news:`, error);
-                loadBtn.textContent = 'Try Again';
+                loadBtn.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i>Try Again';
                 loadBtn.disabled = false;
             });
     }
