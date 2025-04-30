@@ -52,12 +52,14 @@ def category(category_name):
                             categories=VALID_CATEGORIES)
     
     # Try to get cached data first
-    articles = cache.get(f'category_{category_name_lower}')
+    cache_key = f'category_{category_name_lower}_en'
+    articles = cache.get(cache_key)
     
     # If cache is empty, fetch fresh data
     if not articles:
+        # Explicitly set English language
         articles = news_service.get_headlines(category=category_name_lower, country=None, page_size=20)
-        cache.set(f'category_{category_name_lower}', articles, timeout=1800)
+        cache.set(cache_key, articles, timeout=1800)
     
     return render_template('category.html',
                          articles=articles,

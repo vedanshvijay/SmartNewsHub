@@ -9,6 +9,7 @@ class NewsService:
     def __init__(self):
         self.api_key = os.getenv('NEWS_API_KEY')
         self.base_url = "https://api.thenewsapi.com/v1/news"
+        self.default_language = 'en'  # Set English as default language
         print(f"Loading API key: {self.api_key[:5]}...")  # Print first 5 chars for security
         # Store already fetched articles to avoid duplicates
         self.cached_articles = {
@@ -26,7 +27,8 @@ class NewsService:
             
             params = {
                 'api_token': self.api_key,
-                'limit': page_size
+                'limit': page_size,
+                'language': self.default_language
             }
             
             # Map categories to TheNewsAPI format if needed
@@ -101,7 +103,7 @@ class NewsService:
                 'api_token': self.api_key,
                 'search': 'India OR Indian',
                 'locale': 'in',
-                'language': 'en',
+                'language': self.default_language,
                 'limit': page_size
             }
             
@@ -191,7 +193,7 @@ class NewsService:
             params = {
                 'api_token': self.api_key,
                 'search': query,
-                'language': 'en',
+                'language': self.default_language,
                 'limit': page_size
             }
             
