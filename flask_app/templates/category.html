@@ -14,7 +14,7 @@
         </div>
     </header>
 
-    <section class="row">
+    <section class="row" id="articles-container">
         {% for article in articles %}
         <article class="col-md-6 mb-4">
             <div class="card h-100">
@@ -44,5 +44,99 @@
         </div>
         {% endfor %}
     </section>
+
+    <div class="row mt-4 mb-5" id="load-more-container">
+        <div class="col-12 text-center">
+            <button id="load-more-btn" class="btn btn-outline-primary" data-category="{{ category }}">
+                <i class="fas fa-sync me-2" aria-hidden="true"></i>Load More
+            </button>
+            <div id="loading-spinner" class="d-none">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        const articlesContainer = document.getElementById('articles-container');
+        const loadMoreContainer = document.getElementById('load-more-container');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const category = loadMoreBtn.dataset.category;
+        
+        loadMoreBtn.addEventListener('click', function() {
+            // Show loading spinner
+            loadMoreBtn.classList.add('d-none');
+            loadingSpinner.classList.remove('d-none');
+            
+            // Make AJAX request to load more articles
+            fetch(`/api/news/category/${category}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Hide loading spinner
+                    loadingSpinner.classList.add('d-none');
+                    
+                    if (data.articles.length > 0) {
+                        // Append new articles to container
+                        data.articles.forEach(article => {
+                            const articleHTML = `
+                                <article class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        ${article.image_url ? `<img src="${article.image_url}" class="card-img-top" alt="Image for '${article.title}' - ${category} news">` : ''}
+                                        <div class="card-body">
+                                            <h2 class="card-title h5">${article.title}</h2>
+                                            <p class="card-text">${article.description || 'No description available.'}</p>
+                                            <p class="card-text">
+                                                <small class="text-muted">
+                                                    <span><i class="fas fa-newspaper me-1" aria-hidden="true"></i>Source: ${article.source}</span> | 
+                                                    <span><i class="far fa-clock me-1" aria-hidden="true"></i>${article.published_at || ''}</span>
+                                                </small>
+                                            </p>
+                                            <a href="${article.url}" class="btn btn-primary" target="_blank" rel="noopener" aria-label="Read more about '${article.title}'">
+                                                <i class="fas fa-book-reader me-1" aria-hidden="true"></i>Read More
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+                            `;
+                            articlesContainer.insertAdjacentHTML('beforeend', articleHTML);
+                        });
+                        
+                        // Show load more button if there are more articles
+                        if (data.has_more) {
+                            loadMoreBtn.classList.remove('d-none');
+                        } else {
+                            // No more articles available
+                            loadMoreBtn.innerHTML = 'No More Articles';
+                            loadMoreBtn.disabled = true;
+                        }
+                    } else {
+                        // No more articles
+                        loadMoreBtn.innerHTML = 'No More Articles';
+                        loadMoreBtn.disabled = true;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading more articles:', error);
+                    loadingSpinner.classList.add('d-none');
+                    loadMoreBtn.classList.remove('d-none');
+                    
+                    // Show error message
+                    const errorHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle me-2" aria-hidden="true"></i>Error loading more articles. Please try again.
+                            </div>
+                        </div>
+                    `;
+                    articlesContainer.insertAdjacentHTML('beforeend', errorHTML);
+                });
+        });
+    });
+</script>
+{% endblock %}
 {% endblock %} 

@@ -2,6 +2,57 @@
 console.log('SmartNewsHub is running!');
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize all Bootstrap dropdowns
+    const dropdownElementList = document.querySelectorAll('.dropdown-toggle');
+    const dropdownList = [...dropdownElementList].map(dropdownToggleEl => {
+        return new bootstrap.Dropdown(dropdownToggleEl, {
+            autoClose: true
+        });
+    });
+    
+    // Dropdown show/hide handling for better positioning
+    const dropdowns = document.querySelectorAll('.dropdown');
+    dropdowns.forEach(dropdown => {
+        const toggle = dropdown.querySelector('.dropdown-toggle');
+        const menu = dropdown.querySelector('.dropdown-menu');
+        
+        if (toggle && menu) {
+            toggle.addEventListener('click', function(e) {
+                // Toggle visibility with proper positioning
+                if (menu.classList.contains('show')) {
+                    menu.classList.remove('show');
+                } else {
+                    // Close any open dropdowns
+                    document.querySelectorAll('.dropdown-menu.show').forEach(openMenu => {
+                        openMenu.classList.remove('show');
+                    });
+                    
+                    // Position and show this dropdown
+                    menu.classList.add('show');
+                    
+                    // Ensure dropdown is fully visible
+                    const rect = menu.getBoundingClientRect();
+                    const windowHeight = window.innerHeight;
+                    
+                    if (rect.bottom > windowHeight) {
+                        menu.style.maxHeight = (windowHeight - rect.top - 20) + 'px';
+                    }
+                }
+                
+                e.stopPropagation();
+            });
+        }
+    });
+    
+    // Close dropdowns when clicking elsewhere on the page
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                menu.classList.remove('show');
+            });
+        }
+    });
+    
     // Fact card interactions
     const factCard = document.querySelector('.fact-card');
     const refreshButton = document.querySelector('.fact-refresh');
@@ -85,9 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadMoreGlobalBtn = document.getElementById('load-more-global');
     if (loadMoreGlobalBtn) {
         loadMoreGlobalBtn.addEventListener('click', function() {
-            const page = parseInt(this.getAttribute('data-page'));
-            loadMoreNews('global', page);
-            this.setAttribute('data-page', page + 1);
+            loadMoreNews('global');
         });
     }
 
@@ -95,24 +144,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadMoreIndianBtn = document.getElementById('load-more-indian');
     if (loadMoreIndianBtn) {
         loadMoreIndianBtn.addEventListener('click', function() {
-            const page = parseInt(this.getAttribute('data-page'));
-            loadMoreNews('indian', page);
-            this.setAttribute('data-page', page + 1);
+            loadMoreNews('indian');
         });
     }
 
     // Function to load more news
-    function loadMoreNews(type, page) {
-        const url = `/api/news/${type}?page=${page}&page_size=10`;
+    function loadMoreNews(type) {
+        const url = `/api/news/${type}`;
         const loadBtn = document.getElementById(`load-more-${type}`);
+        const container = document.getElementById(`${type}-news-container`);
+        
+        // Show loading state
         loadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
         loadBtn.disabled = true;
 
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                const container = document.getElementById(`${type}-news-container`);
-                
                 if (data.articles && data.articles.length > 0) {
                     data.articles.forEach(article => {
                         const articleDiv = document.createElement('div');
@@ -151,10 +199,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         container.appendChild(articleDiv);
                     });
                     
-                    loadBtn.innerHTML = '<i class="fas fa-plus-circle me-1"></i>Load More';
-                    loadBtn.disabled = false;
-                    
-                    if (data.articles.length < 5) {
+                    // Restore button if there are more results
+                    if (data.has_more) {
+                        loadBtn.innerHTML = '<i class="fas fa-plus-circle me-1"></i>Load More';
+                        loadBtn.disabled = false;
+                    } else {
                         loadBtn.innerHTML = 'No More Articles';
                         loadBtn.disabled = true;
                     }

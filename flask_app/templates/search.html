@@ -22,7 +22,7 @@
         </div>
     </header>
 
-    <section class="row">
+    <section class="row" id="articles-container">
         {% if query %}
             {% for article in articles %}
             <article class="col-md-6 mb-4">
@@ -52,6 +52,22 @@
                 </div>
             </div>
             {% endfor %}
+            
+            {% if articles %}
+            <div class="row mt-4 mb-5" id="load-more-container">
+                <div class="col-12 text-center">
+                    <button id="load-more-btn" class="btn btn-outline-primary" data-query="{{ query }}">
+                        <i class="fas fa-sync me-2" aria-hidden="true"></i>Load More
+                    </button>
+                    <div id="loading-spinner" class="d-none">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
         {% else %}
         <div class="col-12">
             <div class="alert alert-info">
@@ -61,4 +77,91 @@
         {% endif %}
     </section>
 </div>
+
+{% if query %}
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        if (!loadMoreBtn) return; // Exit if no button (no results)
+        
+        const articlesContainer = document.getElementById('articles-container');
+        const loadMoreContainer = document.getElementById('load-more-container');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const query = loadMoreBtn.dataset.query;
+        
+        loadMoreBtn.addEventListener('click', function() {
+            // Show loading spinner
+            loadMoreBtn.classList.add('d-none');
+            loadingSpinner.classList.remove('d-none');
+            
+            // Make AJAX request to load more articles
+            fetch(`/api/news/search?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Hide loading spinner
+                    loadingSpinner.classList.add('d-none');
+                    
+                    if (data.articles.length > 0) {
+                        // Append new articles to container
+                        data.articles.forEach(article => {
+                            const articleHTML = `
+                                <article class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        ${article.image_url ? `<img src="${article.image_url}" class="card-img-top" alt="Image for '${article.title}' - search result for '${query}'">` : ''}
+                                        <div class="card-body">
+                                            <h2 class="card-title h5">${article.title}</h2>
+                                            <p class="card-text">${article.description || 'No description available.'}</p>
+                                            <p class="card-text">
+                                                <small class="text-muted">
+                                                    <span><i class="fas fa-newspaper me-1" aria-hidden="true"></i>Source: ${article.source}</span> | 
+                                                    <span><i class="far fa-clock me-1" aria-hidden="true"></i>${article.published_at || ''}</span>
+                                                </small>
+                                            </p>
+                                            <a href="${article.url}" class="btn btn-primary" target="_blank" rel="noopener" aria-label="Read more about '${article.title}'">
+                                                <i class="fas fa-book-reader me-1" aria-hidden="true"></i>Read More
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+                            `;
+                            articlesContainer.insertAdjacentHTML('beforeend', articleHTML);
+                        });
+                        
+                        // Show load more button if there are more articles
+                        if (data.has_more) {
+                            loadMoreBtn.classList.remove('d-none');
+                        }
+                    } else {
+                        // No more articles
+                        const noMoreHTML = `
+                            <div class="col-12 text-center">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2" aria-hidden="true"></i>No more results available for "${query}".
+                                </div>
+                            </div>
+                        `;
+                        loadMoreContainer.innerHTML = noMoreHTML;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading more search results:', error);
+                    loadingSpinner.classList.add('d-none');
+                    loadMoreBtn.classList.remove('d-none');
+                    
+                    // Show error message
+                    const errorHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle me-2" aria-hidden="true"></i>Error loading more results. Please try again.
+                            </div>
+                        </div>
+                    `;
+                    articlesContainer.insertAdjacentHTML('beforeend', errorHTML);
+                });
+        });
+    });
+</script>
+{% endblock %}
+{% endif %}
 {% endblock %} 

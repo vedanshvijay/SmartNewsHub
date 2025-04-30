@@ -1,0 +1,13 @@
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        const articlesContainer = document.getElementById('articles-container');
+        const loadMoreContainer = document.getElementById('load-more-container');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const category = loadMoreBtn.dataset.category;
+        
+        // ... rest of the code remains the same ...
+    });
+</script>
+{% endblock %} 

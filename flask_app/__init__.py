@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, session
 from flask_caching import Cache
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
@@ -35,18 +35,24 @@ def create_app():
     def update_news_cache():
         with app.app_context():
             try:
-                # Update global news cache
-                global_news = news_service.get_headlines(country='us', page_size=10)
+                # Update global and local news cache
+                news = news_service.get_global_and_local_news()
+                global_news = news['global_news']
+                indian_news = news['indian_news']
+                global_next_page = news['global_next']
+                indian_next_page = news['indian_next']
+                
                 cache.set('global_news', global_news, timeout=1800)  # 30 minutes
-                
-                # Update Indian news cache
-                indian_news = news_service.get_indian_news(page_size=10)
                 cache.set('indian_news', indian_news, timeout=1800)
+                cache.set('global_next_page', global_next_page, timeout=1800)
+                cache.set('indian_next_page', indian_next_page, timeout=1800)
                 
-                # Update category caches
-                for category in ['technology', 'business', 'sports', 'science', 'health', 'entertainment']:
-                    category_news = news_service.get_headlines(category=category, country=None, page_size=20)
+                # Update category caches - categories that work with NewsData.io
+                CATEGORIES = ['business', 'entertainment', 'health', 'science', 'sports', 'technology']
+                for category in CATEGORIES:
+                    category_news, next_page = news_service.get_headlines(category=category)
                     cache.set(f'category_{category}', category_news, timeout=1800)
+                    cache.set(f'category_{category}_next_page', next_page, timeout=1800)
                 
                 # Update daily fact
                 fact = facts_service.get_daily_fact()

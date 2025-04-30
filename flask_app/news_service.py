@@ -1,224 +1,214 @@
 import requests
-from datetime import datetime, timedelta
 import os
+import logging
+from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
 
+# Set up logging
+logging.basicConfig(level=logging.INFO, 
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger('news_service')
+
 class NewsService:
     def __init__(self):
-        self.api_key = os.getenv('NEWS_API_KEY')
-        self.base_url = "https://api.thenewsapi.com/v1/news"
-        self.default_language = 'en'  # Set English as default language
-        print(f"Loading API key: {self.api_key[:5]}...")  # Print first 5 chars for security
-        # Store already fetched articles to avoid duplicates
-        self.cached_articles = {
-            'global': [],
-            'indian': []
+        self.api_key = os.getenv('NEWSDATA_API_KEY')
+        self.base_url = "https://newsdata.io/api/1/news"
+        self.default_language = 'en'
+        if self.api_key:
+            logger.info(f"NewsData.io API key loaded: {self.api_key[:5]}...")
+        else:
+            logger.warning("NEWSDATA_API_KEY not found in environment variables")
+
+    def get_headlines(self, page_size=10, page=0, category=None):
+        params = {
+            'apikey': self.api_key,
+            'language': self.default_language,
         }
-
-    def get_headlines(self, country=None, category=None, page_size=20, page=1):
-        """Get top headlines, optionally by country or category"""
+        
+        # Only add page parameter if it's not the first page (NewsData.io uses nextPage token)
+        if isinstance(page, str) and page:
+            params['page'] = page
+            
+        # Only add category if specified and not None
+        if category:
+            params['category'] = category
+            
         try:
-            print(f"Fetching headlines for country: {country}, category: {category}, page: {page}")
-            
-            # For TheNewsAPI, we'll use the top_stories endpoint
-            endpoint = f"{self.base_url}/top"
-            
-            params = {
-                'api_token': self.api_key,
-                'limit': page_size,
-                'language': self.default_language
-            }
-            
-            # Map categories to TheNewsAPI format if needed
-            if category:
-                params['categories'] = category
-            
-            # Map country to locale in TheNewsAPI
-            if country:
-                params['locale'] = country
-                
-            # If page > 1, we need to fetch new articles that haven't been seen before
-            # Since TheNewsAPI doesn't support direct pagination, we'll increase the limit
-            # and then filter out already seen articles
-            if page > 1:
-                # Increase the fetch count to get more articles
-                params['limit'] = page_size * 2
-                
-            response = requests.get(endpoint, params=params)
-            response.raise_for_status()  # Raise exception for HTTP errors
-            
-            data = response.json()
-            
-            if 'data' not in data:
-                print(f"Error response: {data}")
-                return []
-
-            all_articles = data.get('data', [])
-            formatted_articles = []
-            
-            # Create a set of already seen article URLs for easy lookup
-            cached_urls = {article['url'] for article in self.cached_articles['global']}
-            
-            # Process new articles
-            new_articles = []
-            for article in all_articles:
-                # Skip if we've already processed this article
-                if article.get('url') in cached_urls:
-                    continue
-                    
-                formatted_article = {
-                    'title': article.get('title', 'Untitled Article'),
-                    'description': article.get('description', 'No description available'),
-                    'image_url': article.get('image_url'),
-                    'source': article.get('source', 'Unknown Source'),
-                    'published_at': self._format_date(article.get('published_at')),
-                    'url': article.get('url', '#')
-                }
-                
-                new_articles.append(formatted_article)
-                cached_urls.add(article.get('url', '#'))
-                
-                if len(new_articles) >= page_size:
-                    break
-            
-            # Update our cache with new articles
-            self.cached_articles['global'].extend(new_articles)
-            
-            print(f"Successfully fetched {len(new_articles)} new articles")
-            return new_articles
-        except Exception as e:
-            print(f"Error fetching headlines for {country}: {str(e)}")
-            return []
-
-    def get_indian_news(self, page_size=10, page=1):
-        """Get Indian news"""
-        try:
-            print(f"Fetching Indian news via search... page: {page}")
-            
-            endpoint = f"{self.base_url}/all"
-            
-            params = {
-                'api_token': self.api_key,
-                'search': 'India OR Indian',
-                'locale': 'in',
-                'language': self.default_language,
-                'limit': page_size
-            }
-            
-            # If page > 1, fetch more articles to find new ones
-            if page > 1:
-                params['limit'] = page_size * 2
-            
-            response = requests.get(endpoint, params=params)
+            logger.info(f"Fetching headlines with params: {params}")
+            response = requests.get(self.base_url, params=params)
             response.raise_for_status()
-            
             data = response.json()
             
-            if 'data' not in data:
-                print(f"Error response for Indian news search: {data}")
-                return []
-
-            all_articles = data.get('data', [])
+            if data.get('status') != 'success':
+                logger.error(f"API Error response: {data}")
+                return [], None
+                
+            next_page = data.get('nextPage')
+            logger.info(f"Received next_page token: {next_page}")
             
-            # Create a set of already seen article URLs for easy lookup
-            cached_urls = {article['url'] for article in self.cached_articles['indian']}
+            results = data.get('results', [])
+            logger.info(f"Received {len(results)} articles from API")
             
-            # Process new articles
-            new_articles = []
-            for article in all_articles:
-                # Skip if we've already processed this article
-                if article.get('url') in cached_urls:
+            articles = []
+            for article in results:
+                # Skip articles without descriptions or links
+                if not article.get('description') or not article.get('link'):
                     continue
                 
-                formatted_article = {
+                # Create a unique article ID based on url or title
+                article_id = article.get('article_id') or article.get('link')
+                    
+                articles.append({
                     'title': article.get('title', 'Untitled Article'),
                     'description': article.get('description', 'No description available'),
                     'image_url': article.get('image_url'),
-                    'source': article.get('source', 'Unknown Source'),
-                    'published_at': self._format_date(article.get('published_at')),
-                    'url': article.get('url', '#')
-                }
-                
-                new_articles.append(formatted_article)
-                cached_urls.add(article.get('url', '#'))
-                
-                if len(new_articles) >= page_size:
-                    break
+                    'source': article.get('source_id', 'Unknown Source'),
+                    'published_at': self._format_date(article.get('pubDate')),
+                    'url': article.get('link', '#'),
+                    'id': article_id  # Add unique ID for deduplication
+                })
             
-            # Update our cache with new articles
-            self.cached_articles['indian'].extend(new_articles)
-            
-            print(f"Successfully fetched {len(new_articles)} new Indian articles")
-            return new_articles
+            logger.info(f"Processed {len(articles)} valid articles")
+            return articles, next_page
         except Exception as e:
-            print(f"Error fetching Indian news: {str(e)}")
-            return []
+            logger.error(f"Error fetching headlines: {str(e)}")
+            return [], None
+
+    def get_indian_news(self, page_size=10, page=0):
+        # Use a different approach to get Indian news
+        # Try adding a query for India-related content
+        params = {
+            'apikey': self.api_key,
+            'language': self.default_language,
+            'q': 'India OR Delhi OR Mumbai',  # Search for India-related content
+        }
+        
+        # Only add page parameter if it's not the first page
+        if isinstance(page, str) and page:
+            params['page'] = page
+            
+        try:
+            logger.info(f"Fetching Indian news with params: {params}")
+            response = requests.get(self.base_url, params=params)
+            response.raise_for_status()
+            data = response.json()
+            
+            if data.get('status') != 'success':
+                logger.error(f"API Error response for Indian news: {data}")
+                return [], None
+                
+            next_page = data.get('nextPage')
+            logger.info(f"Received next_page token for Indian news: {next_page}")
+            
+            results = data.get('results', [])
+            logger.info(f"Received {len(results)} Indian news articles from API")
+            
+            articles = []
+            for article in results:
+                # Skip articles without descriptions or links
+                if not article.get('description') or not article.get('link'):
+                    continue
+                
+                # Create a unique article ID based on url or title
+                article_id = article.get('article_id') or article.get('link')
+                    
+                articles.append({
+                    'title': article.get('title', 'Untitled Article'),
+                    'description': article.get('description', 'No description available'),
+                    'image_url': article.get('image_url'),
+                    'source': article.get('source_id', 'Unknown Source'),
+                    'published_at': self._format_date(article.get('pubDate')),
+                    'url': article.get('link', '#'),
+                    'id': article_id  # Add unique ID for deduplication
+                })
+            
+            logger.info(f"Processed {len(articles)} valid Indian news articles")
+            return articles, next_page
+        except Exception as e:
+            logger.error(f"Error fetching Indian news: {str(e)}")
+            return [], None
 
     def get_global_and_local_news(self):
-        """Fetch both global and Indian news"""
-        print("Fetching global news...")
-        global_news = self.get_headlines(country='us', page_size=10)
-        print("Fetching Indian news...")
-        indian_news = self.get_indian_news(page_size=10)
+        # Fetch global news - general headlines without any query
+        global_news, global_next = self.get_headlines(page_size=6, page=0)
+        logger.info(f"Fetched {len(global_news)} global news articles")
+        
+        # Fetch Indian news directly rather than using the nextPage from global news
+        indian_news, indian_next = self.get_indian_news(page_size=6, page=0)
+        logger.info(f"Fetched {len(indian_news)} Indian news articles")
+        
+        # Make sure there's no overlap between the two sets
+        global_urls = {article['url'] for article in global_news}
+        unique_indian_news = [article for article in indian_news if article['url'] not in global_urls]
+        
+        logger.info(f"After deduplication: {len(unique_indian_news)} unique Indian news articles")
         
         return {
             'global_news': global_news,
-            'indian_news': indian_news
+            'indian_news': unique_indian_news,
+            'global_next': global_next,
+            'indian_next': indian_next
         }
 
-    def _format_date(self, date_str):
-        """Format the date string to a more readable format"""
-        if not date_str:
-            return None
+    def search_news(self, query, page=0):
+        params = {
+            'apikey': self.api_key,
+            'language': self.default_language,
+            'q': query,
+        }
+        
+        # Only add page parameter if it's not the first page
+        if isinstance(page, str) and page:
+            params['page'] = page
+            
         try:
-            date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%fZ')
-            return date.strftime('%B %d, %Y %I:%M %p')
-        except Exception:
-            try:
-                # Try another format if the first one fails
-                date = datetime.strptime(date_str.split('.')[0], '%Y-%m-%dT%H:%M:%S')
-                return date.strftime('%B %d, %Y %I:%M %p')
-            except Exception:
-                return date_str
-
-    def search_news(self, query, page_size=20):
-        """Search news articles by keyword"""
-        try:
-            print(f"Searching news for query: {query}")
-            
-            endpoint = f"{self.base_url}/all"
-            
-            params = {
-                'api_token': self.api_key,
-                'search': query,
-                'language': self.default_language,
-                'limit': page_size
-            }
-            
-            response = requests.get(endpoint, params=params)
+            logger.info(f"Searching news with query: {query}, page: {page}")
+            response = requests.get(self.base_url, params=params)
             response.raise_for_status()
-            
             data = response.json()
             
-            if 'data' not in data:
-                print(f"Error response for search query '{query}': {data}")
-                return []
-
-            formatted_articles = []
-            for article in data.get('data', []):
-                formatted_articles.append({
+            if data.get('status') != 'success':
+                logger.error(f"API Error response: {data}")
+                return [], None
+                
+            next_page = data.get('nextPage')
+            logger.info(f"Received next_page token: {next_page}")
+            
+            results = data.get('results', [])
+            logger.info(f"Received {len(results)} search results from API")
+            
+            articles = []
+            for article in results:
+                # Skip articles without descriptions or links
+                if not article.get('description') or not article.get('link'):
+                    continue
+                
+                # Create a unique article ID based on url or title
+                article_id = article.get('article_id') or article.get('link')
+                    
+                articles.append({
                     'title': article.get('title', 'Untitled Article'),
                     'description': article.get('description', 'No description available'),
                     'image_url': article.get('image_url'),
-                    'source': article.get('source', 'Unknown Source'),
-                    'published_at': self._format_date(article.get('published_at')),
-                    'url': article.get('url', '#')
+                    'source': article.get('source_id', 'Unknown Source'),
+                    'published_at': self._format_date(article.get('pubDate')),
+                    'url': article.get('link', '#'),
+                    'id': article_id  # Add unique ID for deduplication
                 })
             
-            print(f"Successfully fetched {len(formatted_articles)} articles for search query '{query}'")
-            return formatted_articles
+            logger.info(f"Processed {len(articles)} valid search results")
+            return articles, next_page
         except Exception as e:
-            print(f"Error searching news: {str(e)}")
-            return []
+            logger.error(f"Error searching news: {str(e)}")
+            return [], None
+
+    def _format_date(self, date_str):
+        if not date_str:
+            return None
+        try:
+            date = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
+            return date.strftime('%B %d, %Y %I:%M %p')
+        except Exception:
+            return date_str

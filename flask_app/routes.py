@@ -1,11 +1,17 @@
-from flask import Blueprint, render_template, request, url_for, redirect, jsonify
+from flask import Blueprint, render_template, request, url_for, redirect, jsonify, session
 from flask_app import cache, news_service, facts_service
 from urllib.parse import quote_plus
 
 main = Blueprint('main', __name__)
 
-# Update categories to match TheNewsAPI categories
-VALID_CATEGORIES = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology']
+# Update categories to match NewsData.io categories
+VALID_CATEGORIES = ['top', 'world', 'business', 'entertainment', 'health', 'science', 'sports', 'technology', 'politics']
+
+# Dictionary to store the article IDs we've already shown to avoid duplication
+SHOWN_ARTICLES = {
+    'global': set(),
+    'indian': set(),
+}
 
 @main.route('/')
 def index():
@@ -13,20 +19,39 @@ def index():
     global_news = cache.get('global_news')
     indian_news = cache.get('indian_news')
     daily_fact = cache.get('daily_fact')
+    global_next_page = cache.get('global_next_page')
+    indian_next_page = cache.get('indian_next_page')
+    
+    # Initialize or clear the shown articles for a new session
+    session.pop('shown_global_articles', None)
+    session.pop('shown_indian_articles', None)
     
     # If cache is empty, fetch fresh data
     if not global_news or not indian_news:
         news = news_service.get_global_and_local_news()
         global_news = news['global_news']
         indian_news = news['indian_news']
+        global_next_page = news['global_next']
+        indian_next_page = news['indian_next']
+        
         # Cache the fresh data
         cache.set('global_news', global_news, timeout=1800)
         cache.set('indian_news', indian_news, timeout=1800)
+        cache.set('global_next_page', global_next_page, timeout=1800)
+        cache.set('indian_next_page', indian_next_page, timeout=1800)
     
     # Get daily fact if not in cache
     if not daily_fact:
         daily_fact = facts_service.get_daily_fact()
         cache.set('daily_fact', daily_fact, timeout=86400)  # 24 hours
+    
+    # Store next page tokens in session for load more functionality
+    session['global_next_page'] = global_next_page
+    session['indian_next_page'] = indian_next_page
+    
+    # Track which articles we've shown to avoid duplication
+    session['shown_global_articles'] = [article['url'] for article in global_news]
+    session['shown_indian_articles'] = [article['url'] for article in indian_news]
     
     return render_template('index.html', 
                          global_news=global_news,
@@ -52,14 +77,21 @@ def category(category_name):
                             categories=VALID_CATEGORIES)
     
     # Try to get cached data first
-    cache_key = f'category_{category_name_lower}_en'
+    cache_key = f'category_{category_name_lower}'
     articles = cache.get(cache_key)
+    next_page = cache.get(f'{cache_key}_next_page')
     
     # If cache is empty, fetch fresh data
     if not articles:
-        # Explicitly set English language
-        articles = news_service.get_headlines(category=category_name_lower, country=None, page_size=20)
+        articles, next_page = news_service.get_headlines(category=category_name_lower)
         cache.set(cache_key, articles, timeout=1800)
+        cache.set(f'{cache_key}_next_page', next_page, timeout=1800)
+    
+    # Store next page token in session for load more functionality
+    session[f'category_{category_name_lower}_next_page'] = next_page
+    
+    # Track which articles we've shown for this category to avoid duplication
+    session[f'shown_category_{category_name_lower}_articles'] = [article['url'] for article in articles]
     
     return render_template('category.html',
                          articles=articles,
@@ -76,7 +108,13 @@ def search():
                              categories=VALID_CATEGORIES)
     
     # For search, we don't cache results as they are dynamic
-    articles = news_service.search_news(query)
+    articles, next_page = news_service.search_news(query)
+    
+    # Store next page token in session for load more functionality
+    session[f'search_{query}_next_page'] = next_page
+    
+    # Track which articles we've shown for this search to avoid duplication
+    session[f'shown_search_{query}_articles'] = [article['url'] for article in articles]
     
     # Create a clean, SEO-friendly URL for sharing
     clean_url = url_for('main.search', q=quote_plus(query), _external=True)
@@ -96,27 +134,107 @@ def random_fact():
 @main.route('/api/news/global')
 def more_global_news():
     """API endpoint to fetch more global news for the load more button"""
-    page = int(request.args.get('page', 1))
-    page_size = int(request.args.get('page_size', 10))
+    # Get next page token from session
+    next_page = session.get('global_next_page', '')
+    shown_articles = session.get('shown_global_articles', [])
     
-    # Fetch news with the page number
-    articles = news_service.get_headlines(country='us', page_size=page_size, page=page)
+    # Fetch news with the next page token
+    articles, new_next_page = news_service.get_headlines(page=next_page)
+    
+    # Filter out articles we've already shown
+    filtered_articles = []
+    for article in articles:
+        if article['url'] not in shown_articles:
+            filtered_articles.append(article)
+            shown_articles.append(article['url'])
+    
+    # Update session with new next page token and shown articles
+    session['global_next_page'] = new_next_page
+    session['shown_global_articles'] = shown_articles
     
     return jsonify({
-        'articles': articles,
-        'has_more': len(articles) > 0
+        'articles': filtered_articles,
+        'has_more': bool(new_next_page) and len(filtered_articles) > 0
     })
 
 @main.route('/api/news/indian')
 def more_indian_news():
     """API endpoint to fetch more Indian news for the load more button"""
-    page = int(request.args.get('page', 1))
-    page_size = int(request.args.get('page_size', 10))
+    # Get next page token from session
+    next_page = session.get('indian_next_page', '')
+    shown_articles = session.get('shown_indian_articles', [])
     
-    # Fetch more Indian news with page number
-    articles = news_service.get_indian_news(page_size=page_size, page=page)
+    # Fetch more Indian news with next page token
+    articles, new_next_page = news_service.get_indian_news(page=next_page)
+    
+    # Filter out articles we've already shown
+    filtered_articles = []
+    for article in articles:
+        if article['url'] not in shown_articles:
+            filtered_articles.append(article)
+            shown_articles.append(article['url'])
+    
+    # Update session with new next page token and shown articles
+    session['indian_next_page'] = new_next_page
+    session['shown_indian_articles'] = shown_articles
     
     return jsonify({
-        'articles': articles,
-        'has_more': len(articles) > 0
+        'articles': filtered_articles,
+        'has_more': bool(new_next_page) and len(filtered_articles) > 0
+    })
+
+@main.route('/api/news/category/<category_name>')
+def more_category_news(category_name):
+    """API endpoint to fetch more category news for the load more button"""
+    # Get next page token from session
+    next_page = session.get(f'category_{category_name}_next_page', '')
+    shown_articles = session.get(f'shown_category_{category_name}_articles', [])
+    
+    # Fetch more category news with next page token
+    articles, new_next_page = news_service.get_headlines(category=category_name, page=next_page)
+    
+    # Filter out articles we've already shown
+    filtered_articles = []
+    for article in articles:
+        if article['url'] not in shown_articles:
+            filtered_articles.append(article)
+            shown_articles.append(article['url'])
+    
+    # Update session with new next page token and shown articles
+    session[f'category_{category_name}_next_page'] = new_next_page
+    session[f'shown_category_{category_name}_articles'] = shown_articles
+    
+    return jsonify({
+        'articles': filtered_articles,
+        'has_more': bool(new_next_page) and len(filtered_articles) > 0
+    })
+
+@main.route('/api/news/search')
+def more_search_results():
+    """API endpoint to fetch more search results for the load more button"""
+    query = request.args.get('q', '')
+    if not query:
+        return jsonify({'articles': [], 'has_more': False})
+    
+    # Get next page token from session
+    next_page = session.get(f'search_{query}_next_page', '')
+    shown_articles = session.get(f'shown_search_{query}_articles', [])
+    
+    # Fetch more search results with next page token
+    articles, new_next_page = news_service.search_news(query, page=next_page)
+    
+    # Filter out articles we've already shown
+    filtered_articles = []
+    for article in articles:
+        if article['url'] not in shown_articles:
+            filtered_articles.append(article)
+            shown_articles.append(article['url'])
+    
+    # Update session with new next page token and shown articles
+    session[f'search_{query}_next_page'] = new_next_page
+    session[f'shown_search_{query}_articles'] = shown_articles
+    
+    return jsonify({
+        'articles': filtered_articles,
+        'has_more': bool(new_next_page) and len(filtered_articles) > 0
     }) 
