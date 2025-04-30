@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category|title }} News & Updates | SmartNewsHub{% endblock %}
+{% block meta_description %}Latest {{ category|title }} news, updates, and headlines from around the world. Find trending {{ category|title }} stories, analysis, and in-depth coverage on SmartNewsHub.{% endblock %}
+{% block og_title %}{{ category|title }} News & Updates | SmartNewsHub{% endblock %}
+{% block og_description %}Stay updated with the latest {{ category|title }} news from around the world on SmartNewsHub. Discover trending stories, breaking news, and expert analysis.{% endblock %}
+
+{% block content %}
+<div class="container">
+    <header class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4">{{ category|title }} News</h1>
+            <hr class="my-4">
+        </div>
+    </header>
+
+    <section class="row">
+        {% for article in articles %}
+        <article class="col-md-6 mb-4">
+            <div class="card h-100">
+                {% if article.image_url %}
+                <img src="{{ article.image_url }}" class="card-img-top" alt="Image for '{{ article.title }}' - {{ category|title }} news">
+                {% endif %}
+                <div class="card-body">
+                    <h2 class="card-title h5">{{ article.title }}</h2>
+                    <p class="card-text">{% if article.description %}{{ article.description }}{% else %}No description available.{% endif %}</p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            <span><i class="fas fa-newspaper me-1" aria-hidden="true"></i>Source: {{ article.source }}</span> | 
+                            <span><i class="far fa-clock me-1" aria-hidden="true"></i>{{ article.published_at }}</span>
+                        </small>
+                    </p>
+                    <a href="{{ article.url }}" class="btn btn-primary" target="_blank" rel="noopener" aria-label="Read more about '{{ article.title }}'">
+                        <i class="fas fa-book-reader me-1" aria-hidden="true"></i>Read More
+                    </a>
+                </div>
+            </div>
+        </article>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2" aria-hidden="true"></i>No articles found for {{ category|title }} category.
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+</div>
+{% endblock %} 

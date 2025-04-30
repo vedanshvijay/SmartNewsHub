@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Latest Global & Indian News | SmartNewsHub{% endblock %}
+{% block meta_description %}Get the latest news from around the world and India. SmartNewsHub brings you breaking news, trending stories and in-depth coverage across business, technology, sports and more.{% endblock %}
+{% block og_title %}Latest Global & Indian News | SmartNewsHub{% endblock %}
+{% block og_description %}Stay informed with the latest breaking news from around the world and India on SmartNewsHub. Your intelligent news aggregation platform.{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <section class="row mb-5">
+        <div class="col-12 text-center">
+            <div class="hero-card card border-0 shadow-sm">
+                <div class="card-body">
+                    <h1 class="display-4 fw-bold">Welcome to SmartNewsHub</h1>
+                    <p class="lead text-muted">Your intelligent news aggregation platform</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Did You Know Section -->
+    <section class="row mb-4">
+        <div class="col-12">
+            <div class="fact-card card border-0 shadow-sm">
+                <div class="fact-card-header">
+                    <div class="fact-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div class="fact-actions">
+                        <button class="btn btn-sm btn-outline-primary fact-share" title="Share this fact">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary fact-refresh" title="Get another fact">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="fact-card-body">
+                    <h2 class="fact-title">Did You Know?</h2>
+                    <p class="fact-text">{{ daily_fact.text }}</p>
+                    <div class="fact-footer">
+                        <div class="fact-source">
+                            <i class="fas fa-info-circle"></i>
+                            <span>{{ daily_fact.source }}</span>
+                        </div>
+                        {% if daily_fact.permalink %}
+                        <a href="{{ daily_fact.permalink }}" class="fact-link" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            View Source
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Global News Section -->
+    <section class="mb-5">
+        <div class="section-header card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="section-title mb-0">
+                        <i class="fas fa-globe me-2"></i>Global Headlines
+                    </h2>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-filter me-1"></i>Categories
+                        </button>
+                        <ul class="dropdown-menu">
+                            {% for category in categories %}
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('main.category', category_name=category) }}">
+                                    {{ category|title }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-4">
+            {% for article in global_news %}
+            <article class="col-md-6 col-lg-4">
+                <div class="news-card card border-0 shadow-sm hover-card">
+                    {% if article.image_url %}
+                    <div class="card-img-wrapper">
+                        <img src="{{ article.image_url }}" class="card-img-top" alt="Image for '{{ article.title }}'">
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h3 class="card-title h5 text-truncate">{{ article.title }}</h3>
+                        <p class="card-text text-muted">{% if article.description %}{{ article.description|truncate(120) }}{% else %}No description available.{% endif %}</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-newspaper me-1"></i>{{ article.source }}
+                            </small>
+                            <small class="text-muted">
+                                <i class="far fa-clock me-1"></i>{{ article.published_at }}
+                            </small>
+                        </div>
+                        <a href="{{ article.url }}" class="btn btn-primary mt-3 w-100" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-book-reader me-1"></i>Read More
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Indian News Section -->
+    <section>
+        <div class="section-header card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="section-title mb-0">
+                        <i class="fas fa-map-marker-alt me-2"></i>Indian Headlines
+                    </h2>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-filter me-1"></i>Categories
+                        </button>
+                        <ul class="dropdown-menu">
+                            {% for category in categories %}
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('main.category', category_name=category) }}">
+                                    {{ category|title }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-4">
+            {% for article in indian_news %}
+            <article class="col-md-6 col-lg-4">
+                <div class="news-card card border-0 shadow-sm hover-card">
+                    {% if article.image_url %}
+                    <div class="card-img-wrapper">
+                        <img src="{{ article.image_url }}" class="card-img-top" alt="Image for '{{ article.title }}'">
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h3 class="card-title h5 text-truncate">{{ article.title }}</h3>
+                        <p class="card-text text-muted">{% if article.description %}{{ article.description|truncate(120) }}{% else %}No description available.{% endif %}</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-newspaper me-1"></i>{{ article.source }}
+                            </small>
+                            <small class="text-muted">
+                                <i class="far fa-clock me-1"></i>{{ article.published_at }}
+                            </small>
+                        </div>
+                        <a href="{{ article.url }}" class="btn btn-primary mt-3 w-100" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-book-reader me-1"></i>Read More
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %} 

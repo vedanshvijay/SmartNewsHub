@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Error - Page Not Found | SmartNewsHub{% endblock %}
+{% block meta_description %}Sorry, the page you are looking for could not be found. Please check the URL or navigate to another section of SmartNewsHub.{% endblock %}
+{% block og_title %}Error - Page Not Found | SmartNewsHub{% endblock %}
+{% block og_description %}The requested page could not be found. Return to the SmartNewsHub homepage to discover the latest news.{% endblock %}
+
+{% block content %}
+<div class="container">
+    <main class="row">
+        <div class="col-12 text-center py-5">
+            <h1 class="display-4 text-danger mb-4"><i class="fas fa-exclamation-triangle me-3"></i>Error</h1>
+            <div class="alert alert-danger">
+                <p class="mb-0">{{ message }}</p>
+            </div>
+            <p class="lead my-4">Please try one of our categories instead:</p>
+            <div class="d-flex justify-content-center flex-wrap gap-2 mb-4">
+                {% for category in categories %}
+                <a href="{{ url_for('main.category', category_name=category) }}" class="btn btn-outline-primary m-1">
+                    <i class="fas fa-{{ 
+                        {
+                            'technology': 'microchip',
+                            'business': 'chart-line',
+                            'sports': 'futbol',
+                            'science': 'flask',
+                            'health': 'heartbeat',
+                            'entertainment': 'film'
+                        }[category] }} me-1"></i>
+                    {{ category|title }}
+                </a>
+                {% endfor %}
+            </div>
+            <a href="{{ url_for('main.index') }}" class="btn btn-primary">
+                <i class="fas fa-home me-2"></i>Return to Homepage
+            </a>
+        </div>
+    </main>
+</div>
+{% endblock %} 

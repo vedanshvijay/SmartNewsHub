@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}{% if query %}{{ query | capitalize }} - Search Results | SmartNewsHub{% else %}Search News | SmartNewsHub{% endif %}{% endblock %}
+{% block meta_description %}{% if query %}Search results for "{{ query }}" at SmartNewsHub. Find the latest news, articles, and updates related to {{ query }}.{% else %}Search for the latest news articles and stay updated with SmartNewsHub. Find breaking news, trending stories and in-depth analysis.{% endif %}{% endblock %}
+{% block og_title %}{% if query %}{{ query | capitalize }} - Search Results | SmartNewsHub{% else %}Search News | SmartNewsHub{% endif %}{% endblock %}
+{% block og_description %}{% if query %}Find news and articles about {{ query }} on SmartNewsHub. Discover trending stories and breaking news from trusted sources worldwide.{% else %}Search SmartNewsHub for the latest news from around the world. Your intelligent news aggregation platform.{% endif %}{% endblock %}
+
+{% if query and clean_url is defined %}
+{% block og_url %}{{ clean_url }}{% endblock %}
+{% endif %}
+
+{% block content %}
+<div class="container">
+    <header class="row mb-4">
+        <div class="col-12">
+            {% if query %}
+            <h1 class="display-4">Search Results for "{{ query }}"</h1>
+            {% else %}
+            <h1 class="display-4">Search News</h1>
+            {% endif %}
+            <hr class="my-4">
+        </div>
+    </header>
+
+    <section class="row">
+        {% if query %}
+            {% for article in articles %}
+            <article class="col-md-6 mb-4">
+                <div class="card h-100">
+                    {% if article.image_url %}
+                    <img src="{{ article.image_url }}" class="card-img-top" alt="Image for '{{ article.title }}' - search result for '{{ query }}'">
+                    {% endif %}
+                    <div class="card-body">
+                        <h2 class="card-title h5">{{ article.title }}</h2>
+                        <p class="card-text">{% if article.description %}{{ article.description }}{% else %}No description available.{% endif %}</p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <span><i class="fas fa-newspaper me-1" aria-hidden="true"></i>Source: {{ article.source }}</span> | 
+                                <span><i class="far fa-clock me-1" aria-hidden="true"></i>{{ article.published_at }}</span>
+                            </small>
+                        </p>
+                        <a href="{{ article.url }}" class="btn btn-primary" target="_blank" rel="noopener" aria-label="Read more about '{{ article.title }}'">
+                            <i class="fas fa-book-reader me-1" aria-hidden="true"></i>Read More
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2" aria-hidden="true"></i>No articles found for "{{ query }}". Try a different search term.
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2" aria-hidden="true"></i>Enter a search term above to find news articles.
+            </div>
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %} 
