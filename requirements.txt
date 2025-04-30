@@ -4,5 +4,4 @@ python-dotenv==1.0.1
 requests==2.31.0
 APScheduler==3.10.4
 Werkzeug==3.0.1
-Flask-Caching==2.1.0
-newsapi-python==0.2.7 
+Flask-Caching==2.1.0 

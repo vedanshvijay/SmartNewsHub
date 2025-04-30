@@ -1,4 +1,4 @@
-from newsapi import NewsApiClient
+import requests
 from datetime import datetime, timedelta
 import os
 from dotenv import load_dotenv
@@ -7,36 +7,48 @@ load_dotenv()
 
 class NewsService:
     def __init__(self):
-        api_key = os.getenv('NEWS_API_KEY')
-        print(f"Loading API key: {api_key[:5]}...")  # Print first 5 chars for security
-        self.newsapi = NewsApiClient(api_key=api_key)
+        self.api_key = os.getenv('NEWS_API_KEY')
+        self.base_url = "https://api.thenewsapi.com/v1/news"
+        print(f"Loading API key: {self.api_key[:5]}...")  # Print first 5 chars for security
 
-    def get_headlines(self, country='in', category=None, page_size=20):
+    def get_headlines(self, country=None, category=None, page_size=20):
+        """Get top headlines, optionally by country or category"""
         try:
             print(f"Fetching headlines for country: {country}, category: {category}")  # Debug log
+            
+            # For TheNewsAPI, we'll use the top_stories endpoint
+            endpoint = f"{self.base_url}/top"
+            
             params = {
-                'page_size': page_size
+                'api_token': self.api_key,
+                'limit': page_size
             }
             
-            if country:
-                params['country'] = country
+            # Map categories to TheNewsAPI format if needed
             if category:
-                params['category'] = category
+                params['categories'] = category
             
-            headlines = self.newsapi.get_top_headlines(**params)
+            # Map country to locale in TheNewsAPI
+            if country:
+                params['locale'] = country
             
-            if headlines['status'] != 'ok':
-                print(f"Error response: {headlines}")  # Print full error response
+            response = requests.get(endpoint, params=params)
+            response.raise_for_status()  # Raise exception for HTTP errors
+            
+            data = response.json()
+            
+            if 'data' not in data:
+                print(f"Error response: {data}")
                 return []
 
             formatted_articles = []
-            for article in headlines['articles']:
+            for article in data.get('data', []):
                 formatted_articles.append({
                     'title': article.get('title', 'Untitled Article'),
-                    'description': article.get('description', ''),
-                    'image_url': article.get('urlToImage'),
-                    'source': article.get('source', {}).get('name', 'Unknown Source'),
-                    'published_at': self._format_date(article.get('publishedAt')),
+                    'description': article.get('description', 'No description available'),
+                    'image_url': article.get('image_url'),
+                    'source': article.get('source', 'Unknown Source'),
+                    'published_at': self._format_date(article.get('published_at')),
                     'url': article.get('url', '#')
                 })
             
@@ -47,29 +59,37 @@ class NewsService:
             return []
 
     def get_indian_news(self, page_size=10):
-        """Get Indian news using search instead of country filter"""
+        """Get Indian news"""
         try:
             print("Fetching Indian news via search...")
-            # Search for news about India or from Indian sources
-            news = self.newsapi.get_everything(
-                q='India OR Indian',
-                language='en',
-                sort_by='publishedAt',
-                page_size=page_size
-            )
             
-            if news['status'] != 'ok':
-                print(f"Error response for Indian news search: {news}")
+            endpoint = f"{self.base_url}/all"
+            
+            params = {
+                'api_token': self.api_key,
+                'search': 'India OR Indian',
+                'locale': 'in',
+                'language': 'en',
+                'limit': page_size
+            }
+            
+            response = requests.get(endpoint, params=params)
+            response.raise_for_status()
+            
+            data = response.json()
+            
+            if 'data' not in data:
+                print(f"Error response for Indian news search: {data}")
                 return []
 
             formatted_articles = []
-            for article in news['articles']:
+            for article in data.get('data', []):
                 formatted_articles.append({
                     'title': article.get('title', 'Untitled Article'),
-                    'description': article.get('description', ''),
-                    'image_url': article.get('urlToImage'),
-                    'source': article.get('source', {}).get('name', 'Unknown Source'),
-                    'published_at': self._format_date(article.get('publishedAt')),
+                    'description': article.get('description', 'No description available'),
+                    'image_url': article.get('image_url'),
+                    'source': article.get('source', 'Unknown Source'),
+                    'published_at': self._format_date(article.get('published_at')),
                     'url': article.get('url', '#')
                 })
             
@@ -96,34 +116,47 @@ class NewsService:
         if not date_str:
             return None
         try:
-            date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
+            date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%fZ')
             return date.strftime('%B %d, %Y %I:%M %p')
         except Exception:
-            return date_str
+            try:
+                # Try another format if the first one fails
+                date = datetime.strptime(date_str.split('.')[0], '%Y-%m-%dT%H:%M:%S')
+                return date.strftime('%B %d, %Y %I:%M %p')
+            except Exception:
+                return date_str
 
     def search_news(self, query, page_size=20):
         """Search news articles by keyword"""
         try:
             print(f"Searching news for query: {query}")
-            news = self.newsapi.get_everything(
-                q=query,
-                language='en',
-                sort_by='publishedAt',
-                page_size=page_size
-            )
             
-            if news['status'] != 'ok':
-                print(f"Error response for search query '{query}': {news}")
+            endpoint = f"{self.base_url}/all"
+            
+            params = {
+                'api_token': self.api_key,
+                'search': query,
+                'language': 'en',
+                'limit': page_size
+            }
+            
+            response = requests.get(endpoint, params=params)
+            response.raise_for_status()
+            
+            data = response.json()
+            
+            if 'data' not in data:
+                print(f"Error response for search query '{query}': {data}")
                 return []
 
             formatted_articles = []
-            for article in news['articles']:
+            for article in data.get('data', []):
                 formatted_articles.append({
                     'title': article.get('title', 'Untitled Article'),
-                    'description': article.get('description', ''),
-                    'image_url': article.get('urlToImage'),
-                    'source': article.get('source', {}).get('name', 'Unknown Source'),
-                    'published_at': self._format_date(article.get('publishedAt')),
+                    'description': article.get('description', 'No description available'),
+                    'image_url': article.get('image_url'),
+                    'source': article.get('source', 'Unknown Source'),
+                    'published_at': self._format_date(article.get('published_at')),
                     'url': article.get('url', '#')
                 })
             

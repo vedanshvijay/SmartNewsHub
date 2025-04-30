@@ -4,7 +4,8 @@ from urllib.parse import quote_plus
 
 main = Blueprint('main', __name__)
 
-VALID_CATEGORIES = ['technology', 'business', 'sports', 'science', 'health', 'entertainment']
+# Update categories to match TheNewsAPI categories
+VALID_CATEGORIES = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology']
 
 @main.route('/')
 def index():
