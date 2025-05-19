@@ -342,33 +342,92 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Handle load more functionality
+// Load More functionality
 document.addEventListener('DOMContentLoaded', function() {
-    const loadMoreButtons = document.querySelectorAll('[id^="load-more-"]');
-    
-    loadMoreButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const type = this.dataset.type;
-            const page = parseInt(this.dataset.page) + 1;
-            const container = document.getElementById(`${type}-news-container`);
-            
-            // Show loading state
-            this.disabled = true;
-            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
-            
-            // Here you would typically make an AJAX call to load more news
-            // For now, we'll just simulate the API call
-            setTimeout(() => {
-                // Update page number
-                this.dataset.page = page;
+    const loadMoreButtons = {
+        'global': document.getElementById('load-more-global'),
+        'indian': document.getElementById('load-more-indian')
+    };
+
+    Object.entries(loadMoreButtons).forEach(([type, button]) => {
+        if (button) {
+            button.addEventListener('click', function() {
+                const page = parseInt(this.dataset.page);
+                const container = document.getElementById(`${type}-news-container`);
                 
-                // Reset button state
-                this.disabled = false;
-                this.innerHTML = '<i class="fas fa-plus-circle me-1"></i>Load More';
-                
-                // Here you would append the new articles to the container
-                console.log(`Loading more ${type} news, page ${page}`);
-            }, 1000);
+                fetch(`/api/news/${type}?page=${page}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.articles && data.articles.length > 0) {
+                            data.articles.forEach(article => {
+                                const articleHtml = `
+                                    <div class="news-article mb-4">
+                                        <div class="article-image-container" style="height: 200px; overflow: hidden; margin-bottom: 1rem;">
+                                            ${article.image_url ? 
+                                                `<img src="${article.image_url}" alt="${article.title}" class="img-fluid rounded" style="width: 100%; height: 100%; object-fit: cover;">` :
+                                                `<div class="no-image-placeholder bg-light rounded d-flex align-items-center justify-content-center" style="width: 100%; height: 100%;">
+                                                    <i class="fas fa-newspaper fa-3x text-muted"></i>
+                                                </div>`
+                                            }
+                                        </div>
+                                        <h4 class="h5"><a href="${article.url}" target="_blank" class="text-decoration-none">${article.title}</a></h4>
+                                        <p class="text-muted small">
+                                            <i class="fas fa-newspaper me-1"></i>${article.source} 
+                                            <i class="far fa-clock ms-2 me-1"></i>${article.published_at}
+                                        </p>
+                                        <p class="card-text">${article.description ? article.description.substring(0, 150) + '...' : 'No description available.'}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <a href="${article.url}" class="btn btn-sm btn-outline-${type === 'global' ? 'primary' : 'success'}" target="_blank">
+                                                Read More <i class="fas fa-external-link-alt ms-1"></i>
+                                            </a>
+                                            <div class="article-actions">
+                                                <button class="btn btn-sm btn-outline-secondary me-2" title="Save for later">
+                                                    <i class="far fa-bookmark"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary" title="Share">
+                                                    <i class="fas fa-share-alt"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <hr class="my-3">
+                                    </div>
+                                `;
+                                container.insertAdjacentHTML('beforeend', articleHtml);
+                            });
+                            
+                            this.dataset.page = page + 1;
+                            if (!data.has_more) {
+                                this.style.display = 'none';
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error loading more news:', error));
+            });
+        }
+    });
+});
+
+// Fix hover issues for buttons
+document.addEventListener('DOMContentLoaded', function() {
+    // Add hover effect to buttons
+    const buttons = document.querySelectorAll('.btn');
+    buttons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            this.style.opacity = '0.8';
+        });
+        button.addEventListener('mouseleave', function() {
+            this.style.opacity = '1';
+        });
+    });
+
+    // Make sure icons are clickable
+    const iconButtons = document.querySelectorAll('.article-actions button');
+    iconButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            // Add your click handling logic here
+            console.log('Button clicked:', this.title);
         });
     });
 });

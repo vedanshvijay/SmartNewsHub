@@ -6,7 +6,7 @@ import os
 main = Blueprint('main', __name__)
 
 # Update categories to match NewsData.io categories
-VALID_CATEGORIES = ['top', 'world', 'business', 'entertainment', 'health', 'science', 'sports', 'technology', 'politics']
+VALID_CATEGORIES = ['top', 'world', 'business', 'entertainment', 'health', 'science', 'sports', 'technology', 'politics', 'india']
 
 # Dictionary to store the article IDs we've already shown to avoid duplication
 SHOWN_ARTICLES = {
@@ -261,8 +261,22 @@ def settings():
     """Route for user settings page"""
     return render_template('settings.html', categories=VALID_CATEGORIES)
 
-@main.route('/location')
+@main.route('/location', methods=['GET', 'POST'])
 def location():
+    if request.method == 'POST':
+        country = request.form.get('country')
+        state = request.form.get('state')
+        city = request.form.get('city')
+        
+        # Store location in session
+        session['country'] = country
+        session['state'] = state
+        session['city'] = city
+        
+        flash('Your location has been saved!', 'success')
+        return redirect(url_for('main.local_news')) # Redirect to local news page
+        
+    # For GET request, simply render the location input page
     return render_template('location.html')
 
 @main.route('/local')
@@ -276,8 +290,38 @@ def local_news():
     # Fetch local news with all location parameters
     articles = news_service.get_local_news(country=country, state=state, city=city)
     
-    return render_template('local.html', 
-                         articles=articles, 
-                         country=country, 
+    return render_template('local.html',
+                         articles=articles,
+                         country=country,
                          state=state,
-                         city=city) 
+                         city=city)
+
+@main.route('/about')
+def about():
+    return render_template('about.html')
+
+@main.route('/help/about-news')
+def about_news():
+    return render_template('help/about_news.html')
+
+@main.route('/help/news-guide')
+def news_guide():
+    return render_template('help/news_guide.html')
+
+@main.route('/help/faq')
+def faq():
+    return render_template('help/faq.html')
+
+@main.route('/help/contact')
+def contact():
+    return render_template('help/contact.html')
+
+@main.route('/profile')
+def profile():
+    return render_template('profile.html')
+
+@main.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out successfully.', 'success')
+    return redirect(url_for('main.index')) 

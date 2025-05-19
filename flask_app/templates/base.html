@@ -37,12 +37,6 @@
                         <li class="nav-item">
                             <a class="nav-link active" href="/" title="Home"><i class="fas fa-home"></i></a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main.category', category_name='world') }}" title="Global News"><i class="fas fa-globe"></i></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main.category', category_name='india') }}" title="Indian News"><i class="fas fa-map-marker-alt"></i></a>
-                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Categories">
                                 <i class="fas fa-th-large"></i>
@@ -63,11 +57,11 @@
                                 <i class="fas fa-question-circle"></i>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="helpDropdown">
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-info-circle me-2"></i>About News</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-book me-2"></i>News Guide</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-question me-2"></i>FAQ</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.about_news') }}"><i class="fas fa-info-circle me-2"></i>About News</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.news_guide') }}"><i class="fas fa-book me-2"></i>News Guide</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.faq') }}"><i class="fas fa-question me-2"></i>FAQ</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-envelope me-2"></i>Contact Support</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.contact') }}"><i class="fas fa-envelope me-2"></i>Contact Support</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -80,12 +74,12 @@
                         </form>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('main.settings') }}" title="Settings">
-                                <i class="fas fa-cog"></i> Settings
+                                <i class="fas fa-cog"></i>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main.location') }}" title="Location">
-                                <i class="fas fa-map-marker-alt"></i>
+                            <a class="nav-link" href="{{ url_for('main.about') }}" title="About Us">
+                                <i class="fas fa-info-circle"></i>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -98,10 +92,10 @@
                                 <i class="fas fa-user"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle me-2"></i>Profile</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.profile') }}"><i class="fas fa-user-circle me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.settings') }}"><i class="fas fa-cog me-2"></i>Settings</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                             </ul>
                         </div>
                     </div>
@@ -124,10 +118,8 @@
                         <h5 class="footer-title">PlanetPulse</h5>
                         <p class="footer-text">Your trusted source for intelligent news aggregation and updates from around the world.</p>
                         <div class="social-links">
-                            <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="https://www.linkedin.com/in/vedansh-vijayvargia-41a64421b/" target="_blank" class="social-link" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="https://github.com/vedanshvijay" target="_blank" class="social-link" title="GitHub"><i class="fab fa-github"></i></a>
                         </div>
                     </div>
                 </div>
@@ -160,8 +152,23 @@
                     </div>
                 </div>
             </div>
+            <!-- About Me Section -->
+            <div class="about-me-section">
+                <h5>About Me</h5>
+                <div class="about-me-content">
+                    <p>Hi, I'm Vedansh Vijayvargia, a passionate developer and creator of PlanetPulse. I love building innovative solutions that make a difference in people's lives. With expertise in web development and a keen interest in technology, I strive to create user-friendly applications that provide value to users worldwide.</p>
+                </div>
+                <div class="about-me-social">
+                    <a href="https://www.linkedin.com/in/vedansh-vijayvargia-41a64421b/" target="_blank" title="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://github.com/vedanshvijay" target="_blank" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+            </div>
             <div class="footer-bottom text-center mt-4 pt-3">
-                <p class="mb-0">&copy; 2024 PlanetPulse. All rights reserved.</p>
+                <p class="mb-0">&copy; 2025 PlanetPulse. All rights reserved. | Developed by <a href="https://www.linkedin.com/in/vedansh-vijayvargia-41a64421b/" target="_blank" class="text-decoration-none">Vedansh Vijayvargia</a></p>
             </div>
         </div>
     </footer>
@@ -265,15 +272,216 @@
         </div>
     </div>
 
+    <!-- FAQ Modal -->
+    <div class="modal fade" id="faqModal" tabindex="-1" aria-labelledby="faqModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="faqModalLabel">
+                        <i class="fas fa-question-circle me-2"></i>Frequently Asked Questions
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="faq-section">
+                        <div class="faq-item">
+                            <div class="faq-question">What is PlanetPulse?</div>
+                            <div class="faq-answer">PlanetPulse is an intelligent news aggregation platform that brings you the latest news from around the world, curated and personalized to your interests.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">How do I customize my news feed?</div>
+                            <div class="faq-answer">You can customize your news feed by clicking on the settings icon and selecting your preferred categories, sources, and topics. You can also drag and drop the navigation items to reorder them according to your preference.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">Is PlanetPulse free to use?</div>
+                            <div class="faq-answer">Yes, PlanetPulse is completely free to use. We provide access to a wide range of news sources and features without any subscription fees.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">How often is the news updated?</div>
+                            <div class="faq-answer">Our news feed is updated in real-time, ensuring you get the latest news as it happens. We aggregate content from multiple reliable sources to provide comprehensive coverage.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">Can I save articles for later reading?</div>
+                            <div class="faq-answer">Yes, you can save articles by clicking the bookmark icon on any article. Your saved articles can be accessed from your profile section.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- News Guide Modal -->
+    <div class="modal fade" id="guideModal" tabindex="-1" aria-labelledby="guideModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="guideModalLabel">
+                        <i class="fas fa-book me-2"></i>News Guide
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="guide-section">
+                        <div class="guide-step">
+                            <div class="guide-step-number">1</div>
+                            <div class="guide-step-content">
+                                <div class="guide-step-title">Getting Started</div>
+                                <div class="guide-step-description">Welcome to PlanetPulse! Start by exploring the main categories in the navigation bar. You can access global news, Indian news, and various other categories.</div>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="guide-step-number">2</div>
+                            <div class="guide-step-content">
+                                <div class="guide-step-title">Customizing Your Experience</div>
+                                <div class="guide-step-description">Click the settings icon to personalize your news feed. You can select your preferred categories, sources, and set up notifications for breaking news.</div>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="guide-step-number">3</div>
+                            <div class="guide-step-content">
+                                <div class="guide-step-title">Using the Search Feature</div>
+                                <div class="guide-step-description">Use the search bar to find specific news articles or topics. The search is powered by advanced algorithms to provide relevant results.</div>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="guide-step-number">4</div>
+                            <div class="guide-step-content">
+                                <div class="guide-step-title">Saving and Sharing</div>
+                                <div class="guide-step-description">Bookmark interesting articles for later reading and share them with friends using the share button. You can also create reading lists for different topics.</div>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="guide-step-number">5</div>
+                            <div class="guide-step-content">
+                                <div class="guide-step-title">Staying Updated</div>
+                                <div class="guide-step-description">Enable notifications to stay informed about breaking news and updates in your areas of interest. You can customize notification preferences in settings.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Guide Bubbles -->
+    <div id="userGuide" class="user-guide">
+        <div class="guide-bubble" data-step="1">
+            <div class="bubble-content">
+                <h5>Welcome to PlanetPulse! 👋</h5>
+                <p>Let's take a quick tour of our features.</p>
+                <div class="bubble-actions">
+                    <button class="btn btn-sm btn-primary next-step">Next</button>
+                    <button class="btn btn-sm btn-outline-secondary skip-guide">Skip Tour</button>
+                </div>
+            </div>
+        </div>
+        <div class="guide-bubble" data-step="2">
+            <div class="bubble-content">
+                <h5>News Categories 📰</h5>
+                <p>Browse news by different categories like Business, Technology, Sports, and more.</p>
+                <div class="bubble-actions">
+                    <button class="btn btn-sm btn-primary next-step">Next</button>
+                    <button class="btn btn-sm btn-outline-secondary skip-guide">Skip Tour</button>
+                </div>
+            </div>
+        </div>
+        <div class="guide-bubble" data-step="3">
+            <div class="bubble-content">
+                <h5>Search & Filter 🔍</h5>
+                <p>Use the search bar to find specific news articles or topics.</p>
+                <div class="bubble-actions">
+                    <button class="btn btn-sm btn-primary next-step">Next</button>
+                    <button class="btn btn-sm btn-outline-secondary skip-guide">Skip Tour</button>
+                </div>
+            </div>
+        </div>
+        <div class="guide-bubble" data-step="4">
+            <div class="bubble-content">
+                <h5>Dark Mode 🌙</h5>
+                <p>Toggle between light and dark themes for comfortable reading.</p>
+                <div class="bubble-actions">
+                    <button class="btn btn-sm btn-primary next-step">Next</button>
+                    <button class="btn btn-sm btn-outline-secondary skip-guide">Skip Tour</button>
+                </div>
+            </div>
+        </div>
+        <div class="guide-bubble" data-step="5">
+            <div class="bubble-content">
+                <h5>You're All Set! 🎉</h5>
+                <p>Start exploring the latest news from around the world.</p>
+                <div class="bubble-actions">
+                    <button class="btn btn-sm btn-primary finish-guide">Finish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Theme JS -->
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
     <!-- Custom Dropdown JS -->
-    <script src="{{ url_for('static', filename='js/custom-dropdown.js') }}"></script>
+    <!-- <script src="{{ url_for('static', filename='js/custom-dropdown.js') }}"></script> -->
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block extra_scripts %}{% endblock %}
     {% block extra_js %}{% endblock %}
+
+    <!-- Add this before the closing body tag -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userGuide = document.getElementById('userGuide');
+            const bubbles = document.querySelectorAll('.guide-bubble');
+            let currentStep = 1;
+
+            // Show first bubble on page load
+            showBubble(currentStep);
+
+            // Next button click handler
+            document.querySelectorAll('.next-step').forEach(button => {
+                button.addEventListener('click', () => {
+                    currentStep++;
+                    if (currentStep <= bubbles.length) {
+                        showBubble(currentStep);
+                    }
+                });
+            });
+
+            // Skip button click handler
+            document.querySelectorAll('.skip-guide').forEach(button => {
+                button.addEventListener('click', () => {
+                    hideGuide();
+                });
+            });
+
+            // Finish button click handler
+            document.querySelector('.finish-guide').addEventListener('click', () => {
+                hideGuide();
+            });
+
+            function showBubble(step) {
+                bubbles.forEach(bubble => {
+                    bubble.style.display = 'none';
+                });
+                document.querySelector(`.guide-bubble[data-step="${step}"]`).style.display = 'block';
+            }
+
+            function hideGuide() {
+                userGuide.style.display = 'none';
+                // Save to localStorage that user has seen the guide
+                localStorage.setItem('guideShown', 'true');
+            }
+
+            // Check if guide has been shown before
+            if (localStorage.getItem('guideShown') === 'true') {
+                hideGuide();
+            }
+        });
+    </script>
+
+    <!-- Copyright Notice -->
+    <div class="copyright-notice text-center py-2" style="position: fixed; bottom: 0; width: 100%; background: rgba(0, 0, 0, 0.8); color: white; z-index: 1000;">
+        <small>&copy; 2025 PlanetPulse. All rights reserved. | Developed by <a href="https://www.linkedin.com/in/vedansh-vijayvargia-41a64421b/" target="_blank" style="color: #4dabf7; text-decoration: none;">Vedansh Vijayvargia</a></small>
+    </div>
 </body>
 </html> 

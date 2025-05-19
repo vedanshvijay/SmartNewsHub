@@ -4,12 +4,16 @@ import logging
 from datetime import datetime
 from dotenv import load_dotenv
 
-load_dotenv()
-
 # Set up logging
 logging.basicConfig(level=logging.INFO, 
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('news_service')
+
+# Load environment variables
+logger.info("Attempting to load environment variables...")
+load_dotenv()
+logger.info(f"Current working directory: {os.getcwd()}")
+logger.info(f"Environment variables loaded: {list(os.environ.keys())}")
 
 class NewsService:
     def __init__(self):
@@ -17,9 +21,10 @@ class NewsService:
         self.base_url = "https://newsdata.io/api/1/news"
         self.default_language = 'en'
         if self.api_key:
-            logger.info(f"NewsData.io API key loaded: {self.api_key[:5]}...")
+            logger.info(f"NewsData.io API key loaded successfully: {self.api_key[:5]}...")
         else:
-            logger.warning("NEWSDATA_API_KEY not found in environment variables")
+            logger.error("NEWSDATA_API_KEY not found in environment variables!")
+            logger.error("Please check that your .env file exists and contains NEWSDATA_API_KEY")
 
     def get_headlines(self, page_size=10, page=0, category=None):
         """Fetch headlines with equal limit for all news types"""
@@ -143,18 +148,23 @@ class NewsService:
 
     def get_global_and_local_news(self):
         # Fetch global news - general headlines without any query
-        global_news, global_next = self.get_headlines(page_size=6, page=0)
+        global_news, global_next = self.get_headlines(page_size=5, page=0)
         logger.info(f"Fetched {len(global_news)} global news articles")
         
         # Fetch Indian news directly rather than using the nextPage from global news
-        indian_news, indian_next = self.get_indian_news(page_size=6, page=0)
+        indian_news, indian_next = self.get_indian_news(page_size=5, page=0)
         logger.info(f"Fetched {len(indian_news)} Indian news articles")
         
         # Make sure there's no overlap between the two sets
         global_urls = {article['url'] for article in global_news}
         unique_indian_news = [article for article in indian_news if article['url'] not in global_urls]
         
-        logger.info(f"After deduplication: {len(unique_indian_news)} unique Indian news articles")
+        # Ensure equal number of articles
+        min_articles = min(len(global_news), len(unique_indian_news))
+        global_news = global_news[:min_articles]
+        unique_indian_news = unique_indian_news[:min_articles]
+        
+        logger.info(f"After balancing: {len(global_news)} global news articles and {len(unique_indian_news)} Indian news articles")
         
         return {
             'global_news': global_news,
