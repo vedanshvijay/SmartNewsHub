@@ -379,11 +379,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     trendingTopics.forEach(topic => {
         topic.addEventListener('click', function(e) {
-            e.preventDefault();
             const topicName = this.textContent.replace('#', '');
-            
-            // Here you would typically make an AJAX call to filter news by topic
-            console.log(`Filtering news by topic: ${topicName}`);
             
             // Update active state
             trendingTopics.forEach(t => t.classList.remove('active'));

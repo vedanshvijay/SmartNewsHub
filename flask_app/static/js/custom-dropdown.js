@@ -78,4 +78,55 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial call and event listener for responsive adjustments
     handleResponsive();
     window.addEventListener('resize', handleResponsive);
+
+    // Initialize all Bootstrap dropdowns
+    const dropdownElementList = document.querySelectorAll('.dropdown-toggle');
+    const dropdownList = [...dropdownElementList].map(dropdownToggleEl => {
+        return new bootstrap.Dropdown(dropdownToggleEl, {
+            autoClose: true
+        });
+    });
+    
+    // Dropdown show/hide handling for better positioning
+    const dropdowns = document.querySelectorAll('.dropdown');
+    dropdowns.forEach(dropdown => {
+        const toggle = dropdown.querySelector('.dropdown-toggle');
+        const menu = dropdown.querySelector('.dropdown-menu');
+        
+        if (toggle && menu) {
+            toggle.addEventListener('click', function(e) {
+                // Toggle visibility with proper positioning
+                if (menu.classList.contains('show')) {
+                    menu.classList.remove('show');
+                } else {
+                    // Close any open dropdowns
+                    document.querySelectorAll('.dropdown-menu.show').forEach(openMenu => {
+                        openMenu.classList.remove('show');
+                    });
+                    
+                    // Position and show this dropdown
+                    menu.classList.add('show');
+                    
+                    // Ensure dropdown is fully visible
+                    const rect = menu.getBoundingClientRect();
+                    const windowHeight = window.innerHeight;
+                    
+                    if (rect.bottom > windowHeight) {
+                        menu.style.maxHeight = (windowHeight - rect.top - 20) + 'px';
+                    }
+                }
+                
+                e.stopPropagation();
+            });
+        }
+    });
+    
+    // Close dropdowns when clicking elsewhere on the page
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                menu.classList.remove('show');
+            });
+        }
+    });
 }); 

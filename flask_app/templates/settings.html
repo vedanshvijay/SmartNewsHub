@@ -4,51 +4,49 @@
 {% block meta_description %}Customize your PlanetPulse experience with personalized settings.{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row">
-        <div class="col-12 col-md-8 mx-auto">
-            <h1 class="mb-4">Settings</h1>
-            
-            <div class="settings-section">
-                <h3>Appearance</h3>
-                <div class="settings-option">
-                    <div class="settings-label">
-                        Dark Mode
-                        <p class="text-muted mb-0 small">Switch between light and dark themes</p>
-                    </div>
-                    <button class="theme-toggle" data-theme="light" onclick="toggleTheme()">
-                        <i class="fas fa-sun"></i>
-                        <i class="fas fa-moon"></i>
-                    </button>
-                </div>
+<div class="container mt-4">
+    <h1 class="mb-4">Settings</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Appearance</h5>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="settingsDarkModeToggle">
+                <label class="form-check-label" for="settingsDarkModeToggle">Dark Mode</label>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_scripts %}
 <script>
-function toggleTheme() {
-    const toggle = document.querySelector('.theme-toggle');
-    const currentTheme = toggle.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+document.addEventListener('DOMContentLoaded', function() {
+    const settingsDarkModeToggle = document.getElementById('settingsDarkModeToggle');
     
-    // Update button state
-    toggle.setAttribute('data-theme', newTheme);
+    // Set initial state
+    const savedTheme = localStorage.getItem('theme');
+    settingsDarkModeToggle.checked = savedTheme === 'dark';
     
-    // Update document theme
-    document.documentElement.setAttribute('data-theme', newTheme);
-    
-    // Save preference
-    localStorage.setItem('theme', newTheme);
-}
-
-// Set initial theme
-document.addEventListener('DOMContentLoaded', () => {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    const toggle = document.querySelector('.theme-toggle');
-    
-    toggle.setAttribute('data-theme', savedTheme);
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    // Toggle dark mode
+    settingsDarkModeToggle.addEventListener('change', function() {
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (darkModeToggle) {
+            darkModeToggle.click(); // Trigger the click on the main toggle
+        } else {
+            // Fallback if the main toggle doesn't exist
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (this.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.body.classList.add('dark-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                document.body.classList.remove('dark-theme');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+    });
 });
 </script>
 {% endblock %} 
