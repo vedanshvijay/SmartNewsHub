@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Frequently Asked Questions - PlanetPulse{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Frequently Asked Questions</h1>
+    
+    <div class="accordion" id="faqAccordion">
+        <!-- General Questions -->
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#general1">
+                    What is PlanetPulse?
+                </button>
+            </h2>
+            <div id="general1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    PlanetPulse is an AI-powered news aggregator that provides personalized news content, real-time updates, and intelligent analysis of current events.
+                </div>
+            </div>
+        </div>
+
+        <!-- Personalization -->
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#personalization1">
+                    How does the personalization work?
+                </button>
+            </h2>
+            <div id="personalization1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Our AI analyzes your reading history, engagement patterns, and preferences to curate news content that matches your interests. The more you use PlanetPulse, the better it gets at understanding your preferences.
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#features1">
+                    What features are available?
+                </button>
+            </h2>
+            <div id="features1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    <ul>
+                        <li>Real-time news updates</li>
+                        <li>AI-powered article summaries</li>
+                        <li>Personalized news feed</li>
+                        <li>Category-based browsing</li>
+                        <li>Local news integration</li>
+                        <li>Breaking news alerts</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical -->
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#technical1">
+                    How often is the news updated?
+                </button>
+            </h2>
+            <div id="technical1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    News content is updated in real-time. Breaking news appears immediately, while regular news updates occur every few minutes to ensure you have the latest information.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

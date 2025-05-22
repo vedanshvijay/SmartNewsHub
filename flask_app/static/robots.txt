@@ -1,0 +1,19 @@
+# robots.txt for PlanetPulse
+User-agent: *
+Allow: /
+Allow: /sitemap.xml
+Allow: /category/
+Allow: /article/
+
+# Disallow admin and private routes
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+Disallow: /user/
+Disallow: /settings/
+
+# Sitemap location
+Sitemap: https://planetpulse.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 10 

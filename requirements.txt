@@ -1,9 +1,21 @@
-Flask==3.0.2
+Flask==2.0.1
+requests==2.26.0
+python-dotenv==0.19.0
+transformers==4.11.3
+textblob==0.15.3
+scikit-learn==0.24.2
+numpy==1.21.2
 gunicorn==21.2.0
-python-dotenv==1.0.1
-requests==2.31.0
 APScheduler==3.10.4
 Werkzeug==3.0.1
 Flask-Caching==2.1.0
 Flask-Login==0.6.3
-pytz==2024.1 
+pytz==2024.1
+flask-sqlalchemy==3.1.1
+beautifulsoup4==4.12.2
+nltk==3.8.1
+spacy==3.7.2
+GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX  # Replace with your Google Analytics ID
+DOMAIN=yourdomain.com  # Replace with your domain
+SECRET_KEY=your-secret-key
+FLASK_ENV=production 

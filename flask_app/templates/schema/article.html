@@ -1,0 +1,32 @@
+<!-- Schema.org markup for news article -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": "{{ article.title }}",
+    "description": "{{ article.description }}",
+    "image": "{{ article.image_url }}",
+    "datePublished": "{{ article.published_at }}",
+    "dateModified": "{{ article.updated_at }}",
+    "author": {
+        "@type": "Organization",
+        "name": "{{ article.source }}",
+        "url": "{{ article.source_url }}"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "PlanetPulse",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ url_for('static', filename='img/logo.png', _external=True) }}"
+        }
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ request.url }}"
+    },
+    "keywords": "{{ article.tags|join(', ') }}",
+    "articleSection": "{{ article.category }}",
+    "inLanguage": "en-US"
+}
+</script> 

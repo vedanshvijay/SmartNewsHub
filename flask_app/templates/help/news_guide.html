@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+
+{% block title %}News Guide - PlanetPulse{% endblock %}
+
+{% block meta_description %}Learn how to make the most of PlanetPulse's features and get the news that matters to you.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>News Guide</h1>
+                <div class="guide-controls">
+                    <button class="btn btn-outline-primary me-2" id="expandAll">
+                        <i class="fas fa-expand-alt me-2"></i>Expand All
+                    </button>
+                    <button class="btn btn-outline-primary" id="collapseAll">
+                        <i class="fas fa-compress-alt me-2"></i>Collapse All
+                    </button>
+                </div>
+            </div>
+
+            <div class="accordion" id="guideAccordion">
+                <!-- Getting Started Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#gettingStarted">
+                            <i class="fas fa-rocket me-2"></i>Getting Started
+                        </button>
+                    </h2>
+                    <div id="gettingStarted" class="accordion-collapse collapse show" data-bs-parent="#guideAccordion">
+                        <div class="accordion-body">
+                            <div class="guide-steps">
+                                <div class="step">
+                                    <div class="step-icon">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                    <div class="step-content">
+                                        <h3>Browse Headlines</h3>
+                                        <p>Start with the latest headlines on the home page</p>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-icon">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <div class="step-content">
+                                        <h3>Search Topics</h3>
+                                        <p>Use the search bar to find specific topics</p>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-icon">
+                                        <i class="fas fa-th-large"></i>
+                                    </div>
+                                    <div class="step-content">
+                                        <h3>Explore Categories</h3>
+                                        <p>Browse different news categories</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Tips Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#searchTips">
+                            <i class="fas fa-search me-2"></i>Search Tips
+                        </button>
+                    </h2>
+                    <div id="searchTips" class="accordion-collapse collapse" data-bs-parent="#guideAccordion">
+                        <div class="accordion-body">
+                            <div class="search-tips-grid">
+                                <div class="tip-card" data-bs-toggle="tooltip" title="Use specific keywords for better results">
+                                    <i class="fas fa-key"></i>
+                                    <h3>Keywords</h3>
+                                    <p>Be specific</p>
+                                </div>
+                                <div class="tip-card" data-bs-toggle="tooltip" title="Try different variations of your search terms">
+                                    <i class="fas fa-sync"></i>
+                                    <h3>Variations</h3>
+                                    <p>Mix it up</p>
+                                </div>
+                                <div class="tip-card" data-bs-toggle="tooltip" title="Use quotes for exact phrase matching">
+                                    <i class="fas fa-quote-right"></i>
+                                    <h3>Quotes</h3>
+                                    <p>Exact matches</p>
+                                </div>
+                                <div class="tip-card" data-bs-toggle="tooltip" title="Check the suggested corrections if available">
+                                    <i class="fas fa-spell-check"></i>
+                                    <h3>Suggestions</h3>
+                                    <p>Check corrections</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article Features Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#articleFeatures">
+                            <i class="fas fa-newspaper me-2"></i>Article Features
+                        </button>
+                    </h2>
+                    <div id="articleFeatures" class="accordion-collapse collapse" data-bs-parent="#guideAccordion">
+                        <div class="accordion-body">
+                            <div class="feature-demo">
+                                <div class="feature-item">
+                                    <button class="btn btn-outline-primary feature-btn" data-feature="read">
+                                        <i class="fas fa-book-reader"></i>
+                                        <span>Read Full Article</span>
+                                    </button>
+                                </div>
+                                <div class="feature-item">
+                                    <button class="btn btn-outline-primary feature-btn" data-feature="share">
+                                        <i class="fas fa-share-alt"></i>
+                                        <span>Share</span>
+                                    </button>
+                                </div>
+                                <div class="feature-item">
+                                    <button class="btn btn-outline-primary feature-btn" data-feature="save">
+                                        <i class="fas fa-bookmark"></i>
+                                        <span>Save</span>
+                                    </button>
+                                </div>
+                                <div class="feature-item">
+                                    <button class="btn btn-outline-primary feature-btn" data-feature="related">
+                                        <i class="fas fa-link"></i>
+                                        <span>Related</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Tips Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navigationTips">
+                            <i class="fas fa-compass me-2"></i>Navigation Tips
+                        </button>
+                    </h2>
+                    <div id="navigationTips" class="accordion-collapse collapse" data-bs-parent="#guideAccordion">
+                        <div class="accordion-body">
+                            <div class="nav-tips">
+                                <div class="nav-tip">
+                                    <i class="fas fa-bars"></i>
+                                    <h3>Category Menu</h3>
+                                    <p>Access topic-specific news</p>
+                                </div>
+                                <div class="nav-tip">
+                                    <i class="fas fa-user"></i>
+                                    <h3>Profile Menu</h3>
+                                    <p>View saved articles</p>
+                                </div>
+                                <div class="nav-tip">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <h3>Load More</h3>
+                                    <p>Get additional results</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.guide-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bs-light);
+    border-radius: 0.5rem;
+    transition: transform 0.2s;
+}
+
+[data-bs-theme="dark"] .step {
+    background: var(--bs-dark);
+    border: 1px solid var(--bs-gray-700);
+}
+
+.step:hover {
+    transform: translateX(10px);
+}
+
+.step-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--bs-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.search-tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.tip-card {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--bs-light);
+    border-radius: 0.5rem;
+    transition: transform 0.2s;
+}
+
+[data-bs-theme="dark"] .tip-card {
+    background: var(--bs-dark);
+    border: 1px solid var(--bs-gray-700);
+}
+
+.tip-card:hover {
+    transform: translateY(-5px);
+}
+
+.tip-card i {
+    font-size: 2rem;
+    color: var(--bs-primary);
+    margin-bottom: 1rem;
+}
+
+.feature-demo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.feature-btn {
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bs-body-bg);
+    border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .feature-btn {
+    background: var(--bs-dark);
+    border-color: var(--bs-gray-700);
+    color: var(--bs-light);
+}
+
+.feature-btn i {
+    font-size: 1.5rem;
+}
+
+.nav-tips {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.nav-tip {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--bs-light);
+    border-radius: 0.5rem;
+    transition: transform 0.2s;
+}
+
+[data-bs-theme="dark"] .nav-tip {
+    background: var(--bs-dark);
+    border: 1px solid var(--bs-gray-700);
+}
+
+.nav-tip:hover {
+    transform: translateY(-5px);
+}
+
+.nav-tip i {
+    font-size: 2rem;
+    color: var(--bs-primary);
+    margin-bottom: 1rem;
+}
+
+/* Dark mode text adjustments */
+[data-bs-theme="dark"] .accordion {
+    --bs-accordion-bg: var(--bs-dark);
+    --bs-accordion-border-color: var(--bs-gray-700);
+    --bs-accordion-btn-color: var(--bs-light);
+    --bs-accordion-btn-bg: var(--bs-dark);
+    --bs-accordion-active-bg: var(--bs-gray-800);
+    --bs-accordion-active-color: var(--bs-light);
+}
+
+[data-bs-theme="dark"] .accordion-button:not(.collapsed) {
+    color: var(--bs-light);
+    background-color: var(--bs-gray-800);
+}
+
+[data-bs-theme="dark"] .accordion-body {
+    color: var(--bs-light);
+}
+
+[data-bs-theme="dark"] h1,
+[data-bs-theme="dark"] h2,
+[data-bs-theme="dark"] h3,
+[data-bs-theme="dark"] h4,
+[data-bs-theme="dark"] h5,
+[data-bs-theme="dark"] h6 {
+    color: var(--bs-light);
+}
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Expand/Collapse all functionality
+    document.getElementById('expandAll').addEventListener('click', function() {
+        document.querySelectorAll('.accordion-collapse').forEach(collapse => {
+            new bootstrap.Collapse(collapse, { show: true });
+        });
+    });
+
+    document.getElementById('collapseAll').addEventListener('click', function() {
+        document.querySelectorAll('.accordion-collapse').forEach(collapse => {
+            new bootstrap.Collapse(collapse, { hide: true });
+        });
+    });
+
+    // Feature button interactions
+    document.querySelectorAll('.feature-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const feature = this.dataset.feature;
+            // TODO: Implement feature demos
+            console.log(`Demo feature: ${feature}`);
+        });
+    });
+});
+</script>
+{% endblock %} 

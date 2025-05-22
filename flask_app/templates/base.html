@@ -3,15 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}PlanetPulse{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}PlanetPulse - Your intelligent news aggregation platform.{% endblock %}">
+    <title>{% block title %}PlanetPulse - Your Intelligent News Aggregation Platform{% endblock %}</title>
     
-    <!-- Open Graph / Social Media Meta Tags -->
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="{% block meta_title %}PlanetPulse - Latest News, Breaking Updates & Personalized News Feed{% endblock %}">
+    <meta name="description" content="{% block meta_description %}Get real-time news updates, breaking stories, and personalized news feed from around the world. Stay informed with PlanetPulse's intelligent news aggregation platform.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}news, breaking news, latest news, world news, indian news, current events, news updates, personalized news, news aggregation, real-time news, business news, technology news, sports news, entertainment news, health news, science news, education news, politics news{% endblock %}">
+    <meta name="author" content="Vedansh Vijayvargia">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.url }}">
-    <meta property="og:title" content="{% block og_title %}PlanetPulse{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}Your intelligent news aggregation platform, bringing you the latest news from around the world.{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}PlanetPulse - Your Intelligent News Aggregation Platform{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Stay informed with the latest news, breaking updates, and personalized news feed from around the world. PlanetPulse brings you real-time news aggregation with AI-powered personalization.{% endblock %}">
     <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='img/logo.png', _external=True) }}{% endblock %}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request.url }}">
+    <meta property="twitter:title" content="{% block twitter_title %}PlanetPulse - Your Intelligent News Aggregation Platform{% endblock %}">
+    <meta property="twitter:description" content="{% block twitter_description %}Stay informed with the latest news, breaking updates, and personalized news feed from around the world.{% endblock %}">
+    <meta property="twitter:image" content="{% block twitter_image %}{{ url_for('static', filename='img/logo.png', _external=True) }}{% endblock %}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ request.url }}">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
     
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -23,53 +50,53 @@
 <body class="d-flex flex-column h-100">
     <!-- Header -->
     <header class="main-header shadow-sm bg-white sticky-top">
-        <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white py-3" role="navigation" aria-label="Main navigation">
             <div class="container">
-                <a class="navbar-brand fw-bold text-primary fs-3" href="/">
+                <a class="navbar-brand fw-bold text-primary fs-3" href="/" aria-label="PlanetPulse Home">
                     <img src="{{ url_for('static', filename='img/logo.png') }}" alt="PlanetPulse Logo" class="d-inline-block align-text-top" style="height: 60px; width: auto;">
                     <span class="d-none d-md-inline">PlanetPulse</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="/" title="Home"><i class="fas fa-home"></i></a>
+                <div class="collapse navbar-collapse" id="navbarNav" role="menubar">
+                    <ul class="navbar-nav me-auto" role="menubar">
+                        <li class="nav-item" role="none">
+                            <a class="nav-link active" href="/" role="menuitem" aria-current="page"><i class="fas fa-home"></i></a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Categories">
+                        <li class="nav-item dropdown" role="none">
+                            <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="menuitem" data-bs-toggle="dropdown" aria-expanded="false" title="Categories">
                                 <i class="fas fa-th-large"></i>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='business') }}"><i class="fas fa-briefcase me-2"></i>Business</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='technology') }}"><i class="fas fa-flask me-2"></i>Technology</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='sports') }}"><i class="fas fa-futbol me-2"></i>Sports</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='health') }}"><i class="fas fa-heartbeat me-2"></i>Health</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='education') }}"><i class="fas fa-graduation-cap me-2"></i>Education</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='entertainment') }}"><i class="fas fa-film me-2"></i>Entertainment</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='science') }}"><i class="fas fa-microscope me-2"></i>Science</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='politics') }}"><i class="fas fa-landmark me-2"></i>Politics</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='business') }}" role="menuitem"><i class="fas fa-briefcase me-2"></i>Business</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='technology') }}" role="menuitem"><i class="fas fa-flask me-2"></i>Technology</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='sports') }}" role="menuitem"><i class="fas fa-futbol me-2"></i>Sports</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='health') }}" role="menuitem"><i class="fas fa-heartbeat me-2"></i>Health</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='education') }}" role="menuitem"><i class="fas fa-graduation-cap me-2"></i>Education</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='entertainment') }}" role="menuitem"><i class="fas fa-film me-2"></i>Entertainment</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='science') }}" role="menuitem"><i class="fas fa-microscope me-2"></i>Science</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.category', category_name='politics') }}" role="menuitem"><i class="fas fa-landmark me-2"></i>Politics</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="helpDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Help">
+                        <li class="nav-item dropdown" role="none">
+                            <a class="nav-link dropdown-toggle" href="#" id="helpDropdown" role="menuitem" data-bs-toggle="dropdown" aria-expanded="false" title="Help">
                                 <i class="fas fa-question-circle"></i>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="helpDropdown">
-                                <li><a class="dropdown-item" href="{{ url_for('main.about_news') }}"><i class="fas fa-info-circle me-2"></i>About News</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('main.news_guide') }}"><i class="fas fa-book me-2"></i>News Guide</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('main.faq') }}"><i class="fas fa-question me-2"></i>FAQ</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.about_news') }}" role="menuitem"><i class="fas fa-info-circle me-2"></i>About News</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.news_guide') }}" role="menuitem"><i class="fas fa-book me-2"></i>News Guide</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.faq') }}" role="menuitem"><i class="fas fa-question me-2"></i>FAQ</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('main.contact') }}"><i class="fas fa-envelope me-2"></i>Contact Support</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.contact') }}" role="menuitem"><i class="fas fa-envelope me-2"></i>Contact Support</a></li>
                             </ul>
                         </li>
                     </ul>
                     <div class="d-flex align-items-center">
-                        <form class="d-flex me-3 search-container" action="{{ url_for('main.search') }}" method="GET">
-                            <input class="form-control me-2" type="search" name="q" placeholder="Search news..." aria-label="Search" required>
-                            <button class="btn btn-outline-primary" type="submit">
-                                <i class="fas fa-search"></i>
+                        <form class="d-flex me-3 search-container" action="{{ url_for('main.search') }}" method="GET" role="search" aria-label="Search news">
+                            <input class="form-control me-2" type="search" name="q" placeholder="Search news..." aria-label="Search news" required>
+                            <button class="btn btn-outline-primary" type="submit" aria-label="Submit search">
+                                <i class="fas fa-search" aria-hidden="true"></i>
                             </button>
                         </form>
                         <li class="nav-item">
@@ -92,10 +119,10 @@
                                 <i class="fas fa-user"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="{{ url_for('main.profile') }}"><i class="fas fa-user-circle me-2"></i>Profile</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('main.settings') }}"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.profile') }}" role="menuitem"><i class="fas fa-user-circle me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.settings') }}" role="menuitem"><i class="fas fa-cog me-2"></i>Settings</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('main.logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.logout') }}" role="menuitem"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                             </ul>
                         </div>
                     </div>
@@ -103,6 +130,22 @@
             </div>
         </nav>
     </header>
+
+    <!-- Breaking News Banner -->
+    <div id="breakingNewsBanner" class="breaking-news-banner d-none">
+        <div class="container">
+            <div class="breaking-news-content">
+                <div class="breaking-news-label">
+                    <i class="fas fa-bolt"></i>
+                    <span>BREAKING</span>
+                </div>
+                <div class="breaking-news-ticker">
+                    <div class="ticker-content"></div>
+                </div>
+                <button class="btn-close btn-close-white" aria-label="Close breaking news"></button>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main class="flex-shrink-0">
@@ -311,16 +354,16 @@
     </div>
 
     <!-- News Guide Modal -->
-    <div class="modal fade" id="guideModal" tabindex="-1" aria-labelledby="guideModalLabel" aria-hidden="true">
+    <div class="modal fade" id="guideModal" tabindex="-1" aria-labelledby="guideModalLabel" aria-hidden="true" role="dialog">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="guideModalLabel">
-                        <i class="fas fa-book me-2"></i>News Guide
+                        <i class="fas fa-book me-2" aria-hidden="true"></i>News Guide
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close guide"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" role="document">
                     <div class="guide-section">
                         <div class="guide-step">
                             <div class="guide-step-number">1</div>
@@ -483,5 +526,157 @@
     <div class="copyright-notice text-center py-2" style="position: fixed; bottom: 0; width: 100%; background: rgba(0, 0, 0, 0.8); color: white; z-index: 1000;">
         <small>&copy; 2025 PlanetPulse. All rights reserved. | Developed by <a href="https://www.linkedin.com/in/vedansh-vijayvargia-41a64421b/" target="_blank" style="color: #4dabf7; text-decoration: none;">Vedansh Vijayvargia</a></small>
     </div>
+
+    <!-- Breaking News Banner Styles -->
+    <style>
+    .breaking-news-banner {
+        background: linear-gradient(90deg, #dc3545, #ff4d5b);
+        color: white;
+        padding: 0.75rem 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1030;  /* Above navbar */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        animation: slideDown 0.5s ease-out;
+    }
+
+    .breaking-news-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        position: relative;
+    }
+
+    .breaking-news-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        font-weight: bold;
+        white-space: nowrap;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .breaking-news-label i {
+        animation: pulse 1s infinite;
+    }
+
+    .breaking-news-ticker {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+        margin: 0 1rem;
+    }
+
+    .ticker-content {
+        display: inline-block;
+        white-space: nowrap;
+        animation: ticker 30s linear infinite;
+    }
+
+    .ticker-content a {
+        color: white;
+        text-decoration: none;
+        margin: 0 1rem;
+        transition: opacity 0.3s ease;
+    }
+
+    .ticker-content a:hover {
+        opacity: 0.8;
+    }
+
+    .btn-close {
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+    }
+
+    .btn-close:hover {
+        opacity: 1;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    @keyframes ticker {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-100%); }
+        to { transform: translateY(0); }
+    }
+
+    /* Dark mode adjustments */
+    [data-bs-theme="dark"] .breaking-news-banner {
+        background: linear-gradient(90deg, #dc3545, #ff4d5b);
+    }
+
+    [data-bs-theme="dark"] .breaking-news-label {
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    /* Adjust main content when breaking news is visible */
+    body:has(.breaking-news-banner:not(.d-none)) main {
+        margin-top: 3.5rem;
+    }
+    </style>
+
+    <!-- Breaking News Banner Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Breaking News Banner
+        const breakingNewsBanner = document.getElementById('breakingNewsBanner');
+        const tickerContent = document.querySelector('.ticker-content');
+        const closeButton = breakingNewsBanner.querySelector('.btn-close');
+
+        function updateBreakingNews() {
+            fetch('/api/news/breaking')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.articles && data.articles.length > 0) {
+                        const breakingNews = data.articles
+                            .map(article => `<a href="${article.url}" target="_blank" class="text-white text-decoration-none">${article.title}</a>`)
+                            .join(' • ');
+                        
+                        tickerContent.innerHTML = breakingNews;
+                        breakingNewsBanner.classList.remove('d-none');
+                        
+                        // Add margin to main content
+                        document.querySelector('main').style.marginTop = '3.5rem';
+                    } else {
+                        breakingNewsBanner.classList.add('d-none');
+                        // Remove margin from main content
+                        document.querySelector('main').style.marginTop = '0';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching breaking news:', error);
+                    breakingNewsBanner.classList.add('d-none');
+                    // Remove margin from main content
+                    document.querySelector('main').style.marginTop = '0';
+                });
+        }
+
+        // Update breaking news every 5 minutes
+        updateBreakingNews();
+        setInterval(updateBreakingNews, 300000);
+
+        // Close button functionality
+        closeButton.addEventListener('click', function() {
+            breakingNewsBanner.classList.add('d-none');
+            // Remove margin from main content
+            document.querySelector('main').style.marginTop = '0';
+        });
+    });
+    </script>
 </body>
 </html> 

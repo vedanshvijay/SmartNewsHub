@@ -1,160 +1,57 @@
-# 🌍 PlanetPulse - Smart News Hub
+# PlanetPulse
 
-PlanetPulse is an intelligent news aggregation platform that brings you the latest news from around the world, curated and personalized to your interests.
+PlanetPulse is an AI-powered news aggregator that provides personalized news content, real-time updates, and intelligent analysis of current events.
 
-## 🚀 Features
+## Project Structure
 
-### Smart News Aggregation
-- Real-time news updates from multiple reliable sources
-- AI-powered content curation
-- Personalized news feed based on user preferences
-- Category-based news browsing
-- Advanced search functionality
+- `flask_app/`
+  - `__init__.py` - Core application setup
+  - `auth.py` - User authentication and login management
+  - `routes.py` - Application routes and endpoints
+  - `models.py` - Database models
+  - `news_service.py` - News fetching and processing
+  - `ai_service.py` - AI analysis functionality
+  - `personalization_service.py` - User personalization and recommendations
+  - `sitemap.py` - SEO functionality
+  - `facts_service.py` - Daily facts feature
+  - `utils/` - Essential utilities
+  - `templates/` - HTML templates
+  - `static/` - Static assets (CSS, JS, images)
 
-### Modern UI/UX
-- Responsive design for all devices
-- Dark/Light mode support
-- Interactive user interface
-- Smooth animations and transitions
-- Intuitive navigation
+## Features
 
-### Advanced Features
-- User authentication and profile management
-- News bookmarking and sharing
-- Customizable news preferences
-- Real-time notifications
-- Multi-language support
+- Real-time news updates
+- AI-powered article summaries
+- Personalized news feed
+- Category-based browsing
+- Local news integration
+- Breaking news alerts
 
-### Technical Features
-- RESTful API architecture
-- Secure data handling
-- Performance optimization
-- Cross-browser compatibility
-- Mobile-first approach
+## Setup
 
-## 🛠️ Getting Started
+1. Install required packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### Prerequisites
-- Python 3.8+
-- Flask 2.0+
-- SQLAlchemy
-- BeautifulSoup4
-- Requests
-- Bootstrap 5
-- Font Awesome 6
-- jQuery 3.6+
+2. Set up environment variables in a `.env` file:
+   ```
+   SECRET_KEY=your_secret_key
+   FLASK_APP=app.py
+   FLASK_ENV=development
+   NEWSDATA_API_KEY=your_api_key
+   NEWSDATA_API_KEY_FALLBACK=your_fallback_api_key
+   DATABASE_URL=your_database_url
+   ```
 
-### Technologies Used
-- **Backend:**
-  - Flask (Python web framework)
-  - SQLAlchemy (ORM)
-  - BeautifulSoup4 (Web scraping)
-  - Requests (HTTP client)
-  - JWT (Authentication)
-  - Redis (Caching)
+3. Run the application:
+   ```bash
+   python app.py
+   ```
 
-- **Frontend:**
-  - HTML5 & CSS3
-  - JavaScript (ES6+)
-  - Bootstrap 5
-  - Font Awesome 6
-  - jQuery
-  - AJAX
-  - LocalStorage API
+## Contributing
 
-- **Database:**
-  - SQLite (Development)
-  - PostgreSQL (Production)
-  - Redis (Caching)
-
-- **DevOps:**
-  - Git (Version Control)
-  - Docker (Containerization)
-  - GitHub Actions (CI/CD)
-  - Nginx (Web Server)
-  - Gunicorn (WSGI Server)
-
-- **APIs & Services:**
-  - News API
-  - Google Analytics
-  - Sentry (Error Tracking)
-  - Cloudflare (CDN)
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/vedanshvijay/PlanetPulse.git
-cd PlanetPulse
-```
-
-2. Create and activate virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4. Set up environment variables:
-```bash
-cp .env.example .env
-# Edit .env with your configuration
-```
-
-5. Initialize the database:
-```bash
-flask db upgrade
-```
-
-6. Run the application:
-```bash
-flask run
-```
-
-### Development Skills Demonstrated
-- **Web Development:**
-  - Full-stack development with Flask
-  - RESTful API design
-  - Responsive web design
-  - Progressive Web App features
-
-- **Database Management:**
-  - Database design and optimization
-  - ORM implementation
-  - Query optimization
-  - Data migration
-
-- **Security:**
-  - JWT authentication
-  - Password hashing
-  - CSRF protection
-  - XSS prevention
-  - SQL injection prevention
-
-- **Performance:**
-  - Caching implementation
-  - Lazy loading
-  - Image optimization
-  - Code minification
-  - Database indexing
-
-- **Testing:**
-  - Unit testing
-  - Integration testing
-  - API testing
-  - Performance testing
-
-## 👨‍💻 About the Developer
-
-Hi, I'm Vedansh Vijayvargia, a passionate developer and creator of PlanetPulse. I love building innovative solutions that make a difference in people's lives. With expertise in web development and a keen interest in technology, I strive to create user-friendly applications that provide value to users worldwide.
-
-### Connect with Me
-- [LinkedIn](https://www.linkedin.com/in/vedansh-vijayvargia-41a64421b/)
-- [GitHub](https://github.com/vedanshvijay)
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 🎯 Vision
 

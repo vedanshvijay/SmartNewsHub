@@ -230,6 +230,90 @@ document.addEventListener('DOMContentLoaded', function() {
     var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
         return new bootstrap.Popover(popoverTriggerEl);
     });
+
+    // Add keyboard navigation support
+    document.addEventListener('keydown', function(e) {
+        // Handle Escape key for modals
+        if (e.key === 'Escape') {
+            const openModals = document.querySelectorAll('.modal.show');
+            openModals.forEach(modal => {
+                const modalInstance = bootstrap.Modal.getInstance(modal);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            });
+        }
+    });
+
+    // Improve focus management for dropdowns
+    const focusDropdowns = document.querySelectorAll('.dropdown');
+    focusDropdowns.forEach(dropdown => {
+        const toggle = dropdown.querySelector('.dropdown-toggle');
+        const menu = dropdown.querySelector('.dropdown-menu');
+        
+        if (toggle && menu) {
+            // Handle keyboard navigation
+            toggle.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.click();
+                }
+            });
+
+            // Trap focus within dropdown when open
+            menu.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    toggle.focus();
+                    this.classList.remove('show');
+                }
+            });
+        }
+    });
+
+    // Add skip link for keyboard users
+    const skipLink = document.createElement('a');
+    skipLink.href = '#main-content';
+    skipLink.className = 'skip-link';
+    skipLink.textContent = 'Skip to main content';
+    document.body.insertBefore(skipLink, document.body.firstChild);
+
+    // Handle focus for modals
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.addEventListener('shown.bs.modal', function() {
+            const focusableElements = this.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (focusableElements.length) {
+                focusableElements[0].focus();
+            }
+        });
+    });
+
+    // Improve form accessibility
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        const inputs = form.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            // Add aria-invalid on validation
+            input.addEventListener('invalid', function() {
+                this.setAttribute('aria-invalid', 'true');
+            });
+            input.addEventListener('input', function() {
+                if (this.validity.valid) {
+                    this.setAttribute('aria-invalid', 'false');
+                }
+            });
+        });
+    });
+
+    // Add focus visible styles
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Tab') {
+            document.body.classList.add('keyboard-user');
+        }
+    });
+    document.addEventListener('mousedown', function() {
+        document.body.classList.remove('keyboard-user');
+    });
 });
 
 // Handle news filtering

@@ -1,7 +1,11 @@
-from flask import Blueprint, render_template, request, url_for, redirect, jsonify, session, flash, current_app
+from flask import Blueprint, render_template, request, url_for, redirect, jsonify, session, flash, current_app, send_from_directory
 from flask_app import cache, news_service, facts_service
 from urllib.parse import quote_plus
 import os
+import logging
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 main = Blueprint('main', __name__)
 
@@ -123,19 +127,16 @@ def search():
         # Debug logging
         current_app.logger.info(f"Found {len(articles)} articles")
         
-        if not articles:
-            flash('No results found for your search query.', 'info')
-            return render_template('search.html', 
-                                query=query,
-                                articles=[],
-                                total_results=0)
+        # Store next page token in session for load more functionality
+        session[f'search_{query}_next_page'] = next_page
         
-        # The articles are already formatted correctly by news_service.py
-        # No need to reformat them as they match our template's expected structure
+        # Store shown articles in session to prevent duplicates
+        session[f'shown_search_{query}_articles'] = []
+        
         return render_template('search.html', 
                             query=query,
                             articles=articles,
-                            total_results=len(articles))
+                            next_page=next_page)
         
     except Exception as e:
         current_app.logger.error(f"Error in search: {str(e)}")
@@ -253,7 +254,8 @@ def more_search_results():
     
     return jsonify({
         'articles': filtered_articles,
-        'has_more': bool(new_next_page) and len(filtered_articles) > 0
+        'has_more': bool(new_next_page) and len(filtered_articles) > 0,
+        'next_page': new_next_page
     })
 
 @main.route('/settings')
@@ -324,4 +326,19 @@ def profile():
 def logout():
     session.clear()
     flash('You have been logged out successfully.', 'success')
-    return redirect(url_for('main.index')) 
+    return redirect(url_for('main.index'))
+
+@main.route('/api/news/breaking')
+def breaking_news():
+    """API endpoint for breaking news."""
+    try:
+        articles = news_service.get_breaking_news()
+        return jsonify({'articles': articles})
+    except Exception as e:
+        current_app.logger.error(f"Error in breaking_news route: {str(e)}")
+        return jsonify({'error': 'Failed to fetch breaking news'}), 500 
+
+@main.route('/robots.txt')
+def robots_txt():
+    """Serve robots.txt file."""
+    return send_from_directory('static', 'robots.txt') 

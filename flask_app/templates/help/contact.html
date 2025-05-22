@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - PlanetPulse{% endblock %}
+
+{% block meta_description %}Get in touch with the PlanetPulse team for support, feedback, or inquiries.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="mb-4">Contact Us</h1>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Get in Touch</h2>
+                    <p>We'd love to hear from you! Here are the ways you can reach us:</p>
+                    
+                    <div class="mb-4">
+                        <h3 class="h5">Email Support</h3>
+                        <p>For general inquiries and support:</p>
+                        <a href="mailto:support@planetpulse.com" class="btn btn-outline-primary">
+                            <i class="fas fa-envelope me-2"></i>support@planetpulse.com
+                        </a>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h3 class="h5">Social Media</h3>
+                        <p>Connect with us on social media:</p>
+                        <div class="d-flex gap-2">
+                            <a href="#" class="btn btn-outline-primary">
+                                <i class="fab fa-twitter me-2"></i>Twitter
+                            </a>
+                            <a href="#" class="btn btn-outline-primary">
+                                <i class="fab fa-facebook me-2"></i>Facebook
+                            </a>
+                            <a href="#" class="btn btn-outline-primary">
+                                <i class="fab fa-linkedin me-2"></i>LinkedIn
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Contact Form</h2>
+                    <form id="contactForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <select class="form-select" id="subject" required>
+                                <option value="">Select a subject</option>
+                                <option value="support">Technical Support</option>
+                                <option value="feedback">Feedback</option>
+                                <option value="business">Business Inquiry</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Response Time</h2>
+                    <p>We aim to respond to all inquiries within 24-48 hours during business days. For urgent matters, please use our email support.</p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Business hours: Monday to Friday, 9:00 AM - 5:00 PM EST
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    // TODO: Implement form submission
+    alert('Thank you for your message! We will get back to you soon.');
+    this.reset();
+});
+</script>
+{% endblock %} 

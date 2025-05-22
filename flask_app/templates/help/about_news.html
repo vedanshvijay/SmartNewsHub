@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}About Our News - PlanetPulse{% endblock %}
+
+{% block meta_description %}Learn about how PlanetPulse aggregates and curates news from reliable sources to bring you the most relevant and up-to-date information.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>About Our News</h1>
+                <button class="btn btn-outline-primary" id="accessibilityToggle" aria-label="Toggle accessibility features">
+                    <i class="fas fa-universal-access me-2"></i>Accessibility
+                </button>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Our News Sources</h2>
+                    <div class="source-grid">
+                        <div class="source-card" data-bs-toggle="tooltip" title="Major international news agencies">
+                            <i class="fas fa-globe fa-2x mb-2"></i>
+                            <h3 class="h6">International</h3>
+                        </div>
+                        <div class="source-card" data-bs-toggle="tooltip" title="Reputable national newspapers">
+                            <i class="fas fa-newspaper fa-2x mb-2"></i>
+                            <h3 class="h6">National</h3>
+                        </div>
+                        <div class="source-card" data-bs-toggle="tooltip" title="Trusted online news platforms">
+                            <i class="fas fa-laptop fa-2x mb-2"></i>
+                            <h3 class="h6">Digital</h3>
+                        </div>
+                        <div class="source-card" data-bs-toggle="tooltip" title="Verified local news sources">
+                            <i class="fas fa-map-marker-alt fa-2x mb-2"></i>
+                            <h3 class="h6">Local</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">News Selection Process</h2>
+                    <div class="process-timeline">
+                        <div class="process-step">
+                            <div class="step-number">1</div>
+                            <h3 class="h6">Verification</h3>
+                            <p>Fact-checking and source validation</p>
+                        </div>
+                        <div class="process-step">
+                            <div class="step-number">2</div>
+                            <h3 class="h6">Curation</h3>
+                            <p>AI-powered content selection</p>
+                        </div>
+                        <div class="process-step">
+                            <div class="step-number">3</div>
+                            <h3 class="h6">Personalization</h3>
+                            <p>Tailored to your interests</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Content Categories</h2>
+                    <div class="category-grid">
+                        <button class="category-btn" data-category="world">
+                            <i class="fas fa-globe-americas"></i> World
+                        </button>
+                        <button class="category-btn" data-category="tech">
+                            <i class="fas fa-microchip"></i> Technology
+                        </button>
+                        <button class="category-btn" data-category="business">
+                            <i class="fas fa-chart-line"></i> Business
+                        </button>
+                        <button class="category-btn" data-category="science">
+                            <i class="fas fa-flask"></i> Science
+                        </button>
+                        <button class="category-btn" data-category="health">
+                            <i class="fas fa-heartbeat"></i> Health
+                        </button>
+                        <button class="category-btn" data-category="entertainment">
+                            <i class="fas fa-film"></i> Entertainment
+                        </button>
+                        <button class="category-btn" data-category="sports">
+                            <i class="fas fa-running"></i> Sports
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Our Commitment</h2>
+                    <div class="commitment-grid">
+                        <div class="commitment-item">
+                            <i class="fas fa-balance-scale fa-2x mb-2"></i>
+                            <h3 class="h6">Unbiased Reporting</h3>
+                            <p>Multiple perspectives on every story</p>
+                        </div>
+                        <div class="commitment-item">
+                            <i class="fas fa-eye fa-2x mb-2"></i>
+                            <h3 class="h6">Transparency</h3>
+                            <p>Clear source attribution</p>
+                        </div>
+                        <div class="commitment-item">
+                            <i class="fas fa-sync fa-2x mb-2"></i>
+                            <h3 class="h6">Regular Updates</h3>
+                            <p>Real-time news delivery</p>
+                        </div>
+                        <div class="commitment-item">
+                            <i class="fas fa-user-friends fa-2x mb-2"></i>
+                            <h3 class="h6">User-Focused</h3>
+                            <p>Tailored to your preferences</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.source-grid, .category-grid, .commitment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.source-card, .process-step, .commitment-item {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: var(--bs-light);
+    transition: transform 0.2s;
+}
+
+[data-bs-theme="dark"] .source-card,
+[data-bs-theme="dark"] .process-step,
+[data-bs-theme="dark"] .commitment-item {
+    background: var(--bs-dark);
+    border: 1px solid var(--bs-gray-700);
+}
+
+.source-card:hover, .process-step:hover, .commitment-item:hover {
+    transform: translateY(-5px);
+}
+
+.category-btn {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 0.5rem;
+    background: var(--bs-body-bg);
+    transition: all 0.2s;
+}
+
+[data-bs-theme="dark"] .category-btn {
+    background: var(--bs-dark);
+    border-color: var(--bs-gray-700);
+    color: var(--bs-light);
+}
+
+.category-btn:hover {
+    background: var(--bs-primary);
+    color: white;
+}
+
+.process-timeline {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    position: relative;
+}
+
+.process-timeline::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--bs-border-color);
+    z-index: 1;
+}
+
+[data-bs-theme="dark"] .process-timeline::before {
+    background: var(--bs-gray-700);
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bs-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* Dark mode text adjustments */
+[data-bs-theme="dark"] .card {
+    background: var(--bs-dark);
+    border-color: var(--bs-gray-700);
+}
+
+[data-bs-theme="dark"] .card-body {
+    color: var(--bs-light);
+}
+
+[data-bs-theme="dark"] h1,
+[data-bs-theme="dark"] h2,
+[data-bs-theme="dark"] h3,
+[data-bs-theme="dark"] h4,
+[data-bs-theme="dark"] h5,
+[data-bs-theme="dark"] h6 {
+    color: var(--bs-light);
+}
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Category buttons interaction
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    categoryButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const category = this.dataset.category;
+            // TODO: Implement category filtering
+            console.log(`Selected category: ${category}`);
+        });
+    });
+
+    // Accessibility toggle
+    const accessibilityToggle = document.getElementById('accessibilityToggle');
+    accessibilityToggle.addEventListener('click', function() {
+        document.body.classList.toggle('high-contrast');
+        // TODO: Implement more accessibility features
+    });
+});
+</script>
+{% endblock %} 

@@ -8,6 +8,8 @@ import pytz
 from .news_service import NewsService
 from .facts_service import FactsService
 from .auth import login_manager
+from .models import db
+from .sitemap import sitemap
 
 load_dotenv()
 
@@ -27,15 +29,23 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev')
     
-    # Initialize cache with app context
-    cache.init_app(app)
+    # Configure SQLAlchemy
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///planetpulse.db')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
-    # Initialize login manager
+    # Initialize extensions with app context
+    db.init_app(app)
+    cache.init_app(app)
     login_manager.init_app(app)
+    
+    # Create database tables
+    with app.app_context():
+        db.create_all()
     
     # Register blueprints
     from .routes import main
     app.register_blueprint(main)
+    app.register_blueprint(sitemap)
     
     # Schedule background tasks
     def update_news_cache():

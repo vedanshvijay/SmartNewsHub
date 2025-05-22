@@ -1,6 +1,7 @@
 from flask_login import LoginManager, UserMixin
 from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
+from .models import User as UserModel
 
 login_manager = LoginManager()
 login_manager.login_view = 'main.login'
@@ -16,6 +17,7 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
-    # This is a placeholder - you should implement your actual user loading logic
-    # For example, loading from a database
-    return None  # Return None if user not found 
+    user = UserModel.query.get(int(user_id))
+    if user:
+        return User(user.id, user.username, user.password_hash)
+    return None 
